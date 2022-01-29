@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  description: Graphical Traceroute Backend API
+  version: "1.0.0"
+  title: Graphical Traceroute
+paths:
+  /traceroute:
+    get:
+      summary: obtains traceroutes from prometheus
+      operationId: getTrace
+      description: |
+        By passing in source, destination, time frame obtain an array of 
+        traceroutes for the frontend to graph
+      parameters:
+        - in: query
+          name: src
+          description: source hostname performing the traceroute
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: dest
+          description: destination hostname for the traceroute
+          schema:
+            type: string
+        - in: query
+          name: start
+          description: start time for filtering traceroutes
+          schema:
+            type: string
+        - in: query
+          name: end
+          description: end time for filtering traceroutes
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Traceroute'
+        '400':
+          description: bad input parameter
+components:
+  schemas:
+    Traceroute:
+      type: object
+      required:
+        - ttl
+        - host
+        - trace_time
+      properties:
+        ttl:
+          type: integer
+          example: 4
+        host:
+          type: string
+          example: 171.55.90.12
+        trace_time:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
