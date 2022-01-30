@@ -3,4 +3,3 @@ app:
   port: '8100'
 prometheus:
   host: '10.6.0.1:9090'
-  api_url: '/api/v2/'
