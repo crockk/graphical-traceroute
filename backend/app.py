@@ -88,6 +88,8 @@ def get_traceroutes(src, dest, search_duration, end_time, num_tracert):
         tracert_metric_range_data, interval_seconds = generate_metric_range_data(src, dest, search_duration, end_time, num_tracert)
     except ValueError as e:
         return {'msg': str(e)}, 400
+    except KeyError as e:
+        return {'msg': str(e)}, 404
 
     # Generate dataframe for data processing
     tracert_df = MetricRangeDataFrame(tracert_metric_range_data)
@@ -129,12 +131,17 @@ def generate_metric_range_data(src, dest, search_duration, end_time, num_tracert
         'type': 'mean'
         }
 
-    tracert_metric_range_data = prom.get_metric_range_data(
-        metric_name=metric,
-        label_config=label_config,
-        start_time=start_time,
-        end_time=end_time,
-    )
+    try:
+        tracert_metric_range_data = prom.get_metric_range_data(
+            metric_name=metric,
+            label_config=label_config,
+            start_time=start_time,
+            end_time=end_time,
+        )
+    except KeyError as e: # This isn't catching the KeyError for some reason, for the life of me I don't know why :( try setting duration to like 2s and run it, the exception appears but it doesnt catch it
+        msg = f'No metrics found within the specified range. Please try widening the range.\n{str(e)}'
+        logger.error(f'{msg}')
+        raise KeyError(msg)
     return tracert_metric_range_data, interval_seconds
 
 
