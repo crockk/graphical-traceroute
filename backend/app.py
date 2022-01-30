@@ -66,7 +66,12 @@ def get_traceroutes(src, dest, search_duration, end_time, num_tracert):
     traceroutes = []
 
     end_time = parse_datetime(end_time)
-    start_time = process_duration(search_duration, end_time)
+    try:
+        start_time = process_duration(search_duration, end_time)
+    except ValueError as e:
+        logger.error('An exception occured. Error:')
+        logger.error(e)
+        return {}, 400
     interval_seconds = ((end_time - start_time).seconds / num_tracert)
 
     instance = src
