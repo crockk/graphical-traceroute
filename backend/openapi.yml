@@ -26,13 +26,13 @@ paths:
             type: string
             example: 1.1.1.1
         - in: query
-          name: start
-          description: start time for filtering traceroutes
+          name: search_duration
+          description: duration of the search, relative to end_time
           schema:
             type: string
             example: 2h
         - in: query
-          name: end
+          name: end_time
           description: end time for filtering traceroutes
           schema:
             type: string
