@@ -5,7 +5,7 @@ import logging.config
 import requests
 import connexion
 from datetime import datetime
-
+from prometheus_api_client import PrometheusConnect
 from flask_cors import CORS, cross_origin
 
 app_conf_file = "app_conf.yml"
@@ -20,15 +20,22 @@ with open(log_conf_file, 'r') as f:
 
 logger = logging.getLogger('basicLogger')
 
-logger.info("App Conf File: %s"% app_conf_file)
-logger.info("Log Conf File: %s"% log_conf_file)
-
-app = connexion.FlaskApp(__name__, specification_dir='')
-app.add_api("openapi.yml", base_path="/", strict_validation=True, validate_responses=True)
-if "TARGET_ENV" not in os.environ or os.environ['TARGET_ENV'] != 'test':
+def startup():
+    app = connexion.FlaskApp(__name__, specification_dir='')
+    app.add_api("openapi.yml", strict_validation=True, validate_responses=True)
     CORS(app.app)
     app.app.config['CORS_HEADERS'] = 'Content-Type'
 
+    logger.info(f"Backend running on localhost:{app_config['app']['port']}")
+    logger.info(f"Make requests at http://localhost:{app_config['app']['port']}/ui")
+    
+    app.run(port=app_config['app']['port'], use_reloader=False, debug=False)
+
+def get_traceroutes(body):
+    """ Retrieves array of traceroutes from Prometheus """
+    logger.info(f'Getting traceroutes')
+
+    return traceroutes, 200
+
 if __name__ == '__main__':
-    init_scheduler()
-    app.run(port=8100, use_reloader=False, debug=False)
+    startup()
