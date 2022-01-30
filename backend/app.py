@@ -76,7 +76,7 @@ def max_routes():
     """ Obtains max_routes from backend application configuration """
     return { 'max_routes': MAX_ROUTES } , 200
 
-def validate_params(src, dest, num_tracert, duration):
+def validate_params(src, dest, num_tracert, duration, end_time):
     """ Validates query parameters src, dest, and num_tracert """
     msg = 'An unknown error occurred.'
     if num_tracert > MAX_ROUTES:
@@ -95,12 +95,19 @@ def validate_params(src, dest, num_tracert, duration):
         logger.error(f'{msg}')
         raise ValueError(msg)
 
+    end_re_str = '^(now|([0-9]*[1-9][0-9]*(s|m|h|d)))$'
+    end_re = re.compile(end_re_str)
+    if not end_re.match(end_time):
+        msg = f"End time format '{end_time}' is not supported. The following time units are supported: s, m, h, d, or specify the current time with the keyword 'now'"
+        logger.error(f'{msg}')
+        raise ValueError(msg)
+
 def get_traceroutes(src, dest, search_duration, end_time, num_tracert):
     """ Retrieves array of traceroutes from Prometheus """
     logger.info(f'Getting traceroutes')
 
     try:
-        validate_params(src, dest, num_tracert, search_duration)
+        validate_params(src, dest, num_tracert, search_duration, end_time)
     except ValueError as e:
         return {'msg': str(e)}, 400
 
