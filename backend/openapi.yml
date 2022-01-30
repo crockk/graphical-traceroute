@@ -30,13 +30,13 @@ paths:
           description: start time for filtering traceroutes
           schema:
             type: string
-            example: now
+            example: 2h
         - in: query
           name: end
           description: end time for filtering traceroutes
           schema:
             type: string
-            example: 2h
+            example: now
         # - in: query
         #   name: granularity
         #   description: chunk size for querying prometheus (will determine number of traceroutes returned)
