@@ -61,6 +61,7 @@ def process_duration(duration, end_time):
 
 
 def max_routes():
+    """ Obtains max_routes from backend application configuration """
     try:
         max_routes = app_config['app']['max_routes']
     except KeyError as e:
