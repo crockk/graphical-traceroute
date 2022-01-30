@@ -18,11 +18,13 @@ paths:
           required: true
           schema:
             type: string
+            example: 10.6.0.1
         - in: query
           name: dest
           description: destination hostname for the traceroute
           schema:
             type: string
+            example: 1.1.1.1
         - in: query
           name: start
           description: start time for filtering traceroutes
