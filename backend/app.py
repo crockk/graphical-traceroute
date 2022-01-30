@@ -67,8 +67,6 @@ def process_duration(duration, end_time):
         duration = int(duration[:-1]) * 3600
     elif duration[-1] == 'd':
         duration = int(duration[:-1]) * 86400
-    # else:
-    #     raise ValueError(f"Time unit '{duration[-1]}' is not supported. The following units are supported: s, m, h, d")
     return datetime.fromtimestamp((datetime.timestamp(end_time) - duration))
 
 
@@ -145,7 +143,6 @@ def generate_metric_range_data(src, dest, search_duration, end_time, num_tracert
         start_time=start_time,
         end_time=end_time,
     )
-
     return tracert_metric_range_data, interval_seconds, start_time, end_time
 
 def generate_traceroutes(tracert_metric_range_data, num_tracert, start_time, end_time, interval_seconds):
