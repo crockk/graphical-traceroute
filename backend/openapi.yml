@@ -63,6 +63,17 @@ paths:
                     type: string
                     description: error message
                     example: Maximum number of traceroutes not configured in backend
+        '404':
+          description: no metrics found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    description: error message
+                    example: No metrics found within specified range
   /max-routes:
     get:
       summary: obtains max number of routes to graph in the frontend
