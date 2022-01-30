@@ -74,7 +74,7 @@ def max_routes():
     """ Obtains max_routes from backend application configuration """
     return { 'max_routes': MAX_ROUTES } , 200
 
-def validate_params(src, dest, num_tracert, duration, end_time):
+def validate_params(src, dest, num_tracert, duration, start_dt):
     """ Validates query parameters """
     msg = 'An unknown error occurred.'
     if num_tracert > MAX_ROUTES:
@@ -93,24 +93,27 @@ def validate_params(src, dest, num_tracert, duration, end_time):
         logger.error(f'{msg}')
         raise ValueError(msg)
 
-    end_re_str = '^(now|([0-9]*[1-9][0-9]*(s|m|h|d)))$'
-    end_re = re.compile(end_re_str)
-    if not end_re.match(end_time):
-        msg = f"End time format '{end_time}' is not supported. The following time units are supported: s, m, h, d, or specify the current time with the keyword 'now'"
+    # end_re_str = '^(now|([0-9]*[1-9][0-9]*(s|m|h|d)))$'
+    # end_re = re.compile(end_re_str)
+    try:
+        datetime.strptime(start_dt, '%Y-%m-%d %H:%M:%S')
+    except ValueError:
+        msg = f"Start time format '{start_dt}' is not supported. Date should be in the following format: '%Y-%M-%d %H:%m%s'"
         logger.error(f'{msg}')
         raise ValueError(msg)
 
-def get_traceroutes(src, dest, search_duration, end_time, num_tracert):
+
+def get_traceroutes(src, dest, search_duration, start_dt, num_tracert):
     """ Retrieves array of traceroutes from Prometheus """
     logger.info(f'Getting traceroutes')
 
     try:
-        validate_params(src, dest, num_tracert, search_duration, end_time)
+        validate_params(src, dest, num_tracert, search_duration, start_dt)
     except ValueError as e:
         return {'msg': str(e)}, 400
 
     # Use query params to get metrics
-    tracert_metric_range_data, interval_seconds, start_time, end_time = generate_metric_range_data(src, dest, search_duration, end_time, num_tracert)
+    tracert_metric_range_data, interval_seconds, start_time, end_time = generate_metric_range_data(src, dest, search_duration, start_dt, num_tracert)
         
     # Generate traceroutes from metric range data
     try:
@@ -119,10 +122,10 @@ def get_traceroutes(src, dest, search_duration, end_time, num_tracert):
         return {'msg': str(e)}, 404
     return traceroutes, 200
 
-def generate_metric_range_data(src, dest, search_duration, end_time, num_tracert):
+def generate_metric_range_data(src, dest, search_duration, start_dt, num_tracert):
     """ Parses query params and returns metric range data from Prometheus """
 
-    end_time = parse_datetime(end_time)
+    end_time = datetime.strptime(start_dt, '%Y-%m-%d %H:%M:%S')
     start_time = process_duration(search_duration, end_time)
     interval_seconds = ((end_time - start_time).seconds / num_tracert)
 

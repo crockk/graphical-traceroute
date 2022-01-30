@@ -27,17 +27,17 @@ paths:
             example: 1.1.1.1
         - in: query
           name: search_duration
-          description: duration of the search, relative to end_time
+          description: duration of the search, relative to start_dt (start_dt - search_duration)
           schema:
             type: string
             example: 2h
-        # TODO: Refactor param to be datetime, rename?
         - in: query
-          name: end_time
-          description: end time for filtering traceroutes
+          name: start_dt
+          description: start datetime for filtering traceroutes
           schema:
             type: string
-            example: now
+            format: date-time
+            example: '2016-08-29 09:12:33'
         - in: query
           name: num_tracert
           description: number of traceroutes to return in the query 
