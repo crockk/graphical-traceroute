@@ -63,13 +63,13 @@ def process_duration(duration, end_time):
 def max_routes():
     """ Obtains max_routes from backend application configuration """
     try:
-        max_routes = app_config['app']['max_routes']
+        max_routes = int(app_config['app']['max_routes'])
     except KeyError as e:
         msg = 'App configuration value "max_routes" not found in app_conf.yml.'
         logger.error(f'{msg} Error:')
         logger.error(e)
         return {'msg': msg}, 500
-    return { 'max_routes': int(app_config['app']['max_routes']) } , 200
+    return { 'max_routes': max_routes } , 200
 
 def get_traceroutes(src, dest, search_duration, end_time, num_tracert):
     """ Retrieves array of traceroutes from Prometheus """
