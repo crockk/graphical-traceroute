@@ -70,6 +70,17 @@ paths:
                     type: integer
                     description: Maximum number of traceroutes to graph
                     example: 8
+        '500':
+          description: value not found in backend configuration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    description: error message
+                    example: Maximum number of traceroutes not configured in backend
 components:
   schemas:
     TraceRoute:

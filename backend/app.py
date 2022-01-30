@@ -61,6 +61,12 @@ def process_duration(duration, end_time):
 
 
 def max_routes():
+    try:
+        max_routes = app_config['app']['max_routes']
+    except KeyError as e:
+        logger.error(f'App configuration value "max_routes" not found in app_conf.yml. Error:')
+        logger.error(e)
+        return {'msg': 'App configuration value "max_routes" not found in app_conf.yml.'}, 500
     return { 'max_routes': int(app_config['app']['max_routes']) } , 200
 
 def get_traceroutes(src, dest, search_duration, end_time, num_tracert):
