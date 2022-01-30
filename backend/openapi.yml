@@ -62,7 +62,7 @@ paths:
                   msg:
                     type: string
                     description: error message
-                    example: Maximum number of traceroutes not configured in backend
+                    example: "Search duration time unit 'a' is not supported. The following units are supported: s, m, h, d"
         '404':
           description: no metrics found
           content:
