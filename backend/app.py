@@ -4,6 +4,7 @@ import logging
 import logging.config
 import requests
 import connexion
+import re
 import pandas as pd
 from flask_cors import CORS, cross_origin
 from datetime import datetime, timedelta
@@ -66,8 +67,8 @@ def process_duration(duration, end_time):
         duration = int(duration[:-1]) * 3600
     elif duration[-1] == 'd':
         duration = int(duration[:-1]) * 86400
-    else:
-        raise ValueError(f"Time unit '{duration[-1]}' is not supported. The following units are supported: s, m, h, d")
+    # else:
+    #     raise ValueError(f"Time unit '{duration[-1]}' is not supported. The following units are supported: s, m, h, d")
     return datetime.fromtimestamp((datetime.timestamp(end_time) - duration))
 
 
@@ -75,49 +76,49 @@ def max_routes():
     """ Obtains max_routes from backend application configuration """
     return { 'max_routes': MAX_ROUTES } , 200
 
+def validate_params(src, dest, num_tracert, duration):
+    """ Validates query parameters src, dest, and num_tracert """
+    msg = 'An unknown error occurred.'
+    if num_tracert > MAX_ROUTES:
+        msg = f'Number of traceroutes requested ({num_tracert}) exceeds MAX_ROUTES configuration value ({MAX_ROUTES})'
+        logger.error(f'{msg}')
+        raise ValueError(msg)
+    elif num_tracert <= 0:
+        msg = f'Number of traceroutes requested ({num_tracert}) must be greater than 0.'
+        logger.error(f'{msg}')
+        raise ValueError(msg)
+
+    duration_re_str = '^[0-9]*[1-9][0-9]*(s|m|h|d)$'
+    duration_re = re.compile(duration_re_str)
+    if not duration_re.match(duration):
+        msg = f"Search duration time unit '{duration[-1]}' is not supported. The following units are supported: s, m, h, d"
+        logger.error(f'{msg}')
+        raise ValueError(msg)
+
 def get_traceroutes(src, dest, search_duration, end_time, num_tracert):
     """ Retrieves array of traceroutes from Prometheus """
     logger.info(f'Getting traceroutes')
 
-    traceroutes = []
-
-    if num_tracert > MAX_ROUTES:
-        return {'msg': f'Number of traceroutes requested ({num_tracert}) exceeds MAX_ROUTES configuration value ({MAX_ROUTES})'}, 400
-
     try:
-        tracert_metric_range_data, interval_seconds = generate_metric_range_data(src, dest, search_duration, end_time, num_tracert)
+        validate_params(src, dest, num_tracert, search_duration)
     except ValueError as e:
         return {'msg': str(e)}, 400
+
+    # Use query params to get metrics
+    tracert_metric_range_data, interval_seconds, start_time, end_time = generate_metric_range_data(src, dest, search_duration, end_time, num_tracert)
+        
+    # Generate traceroutes from metric range data
+    try:
+        traceroutes = generate_traceroutes(tracert_metric_range_data, num_tracert, start_time, end_time, interval_seconds)
     except KeyError as e:
         return {'msg': str(e)}, 404
-
-    # Generate dataframe for data processing
-    tracert_df = MetricRangeDataFrame(tracert_metric_range_data)
-
-    this_timestamp = tracert_df.index.max()
-    for i in range(num_tracert):
-        hops = []
-        hop_vals = tracert_df.loc[this_timestamp, ["path", "ttl"]].values
-        for hop in hop_vals:
-            this_hop = {}
-            this_hop['host'] = hop[0]
-            this_hop['ttl'] = int(hop[1])
-            hops.append(this_hop)
-        traceroutes.append({'hops': hops, 'trace_time': datetime.fromtimestamp(this_timestamp)})
-        this_timestamp = this_timestamp - interval_seconds
-
     return traceroutes, 200
 
 def generate_metric_range_data(src, dest, search_duration, end_time, num_tracert):
     """ Parses query params and returns metric range data from Prometheus """
 
     end_time = parse_datetime(end_time)
-    try:
-        start_time = process_duration(search_duration, end_time)
-    except ValueError as e:
-        msg = f'An exception occured while processing the query parameter: {search_duration}.\n{str(e)}'
-        logger.error(f'{msg}')
-        raise ValueError(msg)
+    start_time = process_duration(search_duration, end_time)
     interval_seconds = ((end_time - start_time).seconds / num_tracert)
 
     instance = src
@@ -131,19 +132,42 @@ def generate_metric_range_data(src, dest, search_duration, end_time, num_tracert
         'type': 'mean'
         }
 
+    tracert_metric_range_data = prom.get_metric_range_data(
+        metric_name=metric,
+        label_config=label_config,
+        start_time=start_time,
+        end_time=end_time,
+    )
+
+    return tracert_metric_range_data, interval_seconds, start_time, end_time
+
+def generate_traceroutes(tracert_metric_range_data, num_tracert, start_time, end_time, interval_seconds):
+    """ Generate traceroutes from metric range data"""
     try:
-        tracert_metric_range_data = prom.get_metric_range_data(
-            metric_name=metric,
-            label_config=label_config,
-            start_time=start_time,
-            end_time=end_time,
-        )
-    except KeyError as e: # This isn't catching the KeyError for some reason, for the life of me I don't know why :( try setting duration to like 2s and run it, the exception appears but it doesnt catch it
-        msg = f'No metrics found within the specified range ({start_time} - {end_time}). Please try widening the range.\n{str(e)}'
+        tracert_df = MetricRangeDataFrame(tracert_metric_range_data)
+    except KeyError as e:
+        msg = f'No metrics found within the specified range ({start_time} - {end_time}). Please try widening the range.'
         logger.error(f'{msg}')
         raise KeyError(msg)
-    return tracert_metric_range_data, interval_seconds
 
+    this_timestamp = tracert_df.index.max()
+    traceroutes = []
+    for i in range(num_tracert):
+        hops = []
+        try:
+            hop_vals = tracert_df.loc[this_timestamp, ["path", "ttl"]].values
+        except KeyError as e:
+            msg = f'No metrics found within the specified range ({start_time} - {end_time}). Please try widening the range.'
+            logger.error(f'{msg}')
+            raise KeyError(msg)
+        for hop in hop_vals:
+            this_hop = {}
+            this_hop['host'] = hop[0]
+            this_hop['ttl'] = int(hop[1])
+            hops.append(this_hop)
+        traceroutes.append({'hops': hops, 'trace_time': datetime.fromtimestamp(this_timestamp)})
+        this_timestamp = this_timestamp - interval_seconds
+    return traceroutes
 
 if __name__ == '__main__':
     startup()
