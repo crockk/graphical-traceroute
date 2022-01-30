@@ -51,17 +51,30 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Hop'
+                  $ref: '#/components/schemas/TraceRoute'
         '400':
           description: bad input parameter
 components:
   schemas:
+    TraceRoute:
+      type: object
+      required:
+        - hops
+        - trace_time
+      properties:
+        hops:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hop'
+        trace_time:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
     Hop:
       type: object
       required:
         - ttl
         - host
-        - trace_time
       properties:
         ttl:
           type: integer
@@ -69,7 +82,3 @@ components:
         host:
           type: string
           example: 171.55.90.12
-        trace_time:
-          type: string
-          format: date-time
-          example: '2016-08-29T09:12:33.001Z'
