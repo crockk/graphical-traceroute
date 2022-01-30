@@ -31,6 +31,7 @@ paths:
           schema:
             type: string
             example: 2h
+        # TODO: Refactor param to be datetime, rename?
         - in: query
           name: end_time
           description: end time for filtering traceroutes
