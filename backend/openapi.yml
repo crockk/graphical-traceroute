@@ -28,11 +28,13 @@ paths:
           description: start time for filtering traceroutes
           schema:
             type: string
+            example: now
         - in: query
           name: end
           description: end time for filtering traceroutes
           schema:
             type: string
+            example: 2h
       responses:
         '200':
           description: search results matching criteria
