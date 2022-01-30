@@ -139,7 +139,7 @@ def generate_metric_range_data(src, dest, search_duration, end_time, num_tracert
             end_time=end_time,
         )
     except KeyError as e: # This isn't catching the KeyError for some reason, for the life of me I don't know why :( try setting duration to like 2s and run it, the exception appears but it doesnt catch it
-        msg = f'No metrics found within the specified range({start_time} - {end_time}). Please try widening the range.\n{str(e)}'
+        msg = f'No metrics found within the specified range ({start_time} - {end_time}). Please try widening the range.\n{str(e)}'
         logger.error(f'{msg}')
         raise KeyError(msg)
     return tracert_metric_range_data, interval_seconds
