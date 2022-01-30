@@ -23,10 +23,21 @@ with open(log_conf_file, 'r') as f:
     logging.config.dictConfig(log_config)
 logger = logging.getLogger('basicLogger')
 
-# connect to prometheus
-logger.info(f"Attempting to connect to Prometheus at http://{app_config['prometheus']['host']}...")
+# define global variables
 try:
-    prom = PrometheusConnect(url=f"http://{app_config['prometheus']['host']}", disable_ssl=True)
+    MAX_ROUTES = int(app_config['app']['max_routes'])
+    LISTEN_PORT = int(app_config['app']['port'])
+    PROMETHEUS_HOST = app_config['prometheus']['host']
+except KeyError as e:
+    msg = 'Required app configuration value not found in app_conf.yml.'
+    logger.error(f'{msg} Error:')
+    logger.error(e)
+    exit(1)
+
+# connect to prometheus
+logger.info(f"Attempting to connect to Prometheus at http://{PROMETHEUS_HOST}...")
+try:
+    prom = PrometheusConnect(url=f"http://{PROMETHEUS_HOST}", disable_ssl=True)
 except Error as e:
     logger.info(f"Failed to connect to Prometheus. Error:")
     logger.info(e)
@@ -40,10 +51,10 @@ def startup():
     CORS(app.app)
     app.app.config['CORS_HEADERS'] = 'Content-Type'
 
-    logger.info(f"Backend running on localhost:{app_config['app']['port']}")
-    logger.info(f"Make requests at http://localhost:{app_config['app']['port']}/ui")
+    logger.info(f"Backend running on localhost:{LISTEN_PORT}")
+    logger.info(f"Make requests at http://localhost:{LISTEN_PORT}/ui")
     
-    app.run(port=app_config['app']['port'], use_reloader=True, debug=False)
+    app.run(port=LISTEN_PORT, use_reloader=True, debug=False)
 
 def process_duration(duration, end_time):
     """ Gets date based on a given duration and end time"""
@@ -62,21 +73,17 @@ def process_duration(duration, end_time):
 
 def max_routes():
     """ Obtains max_routes from backend application configuration """
-    try:
-        max_routes = int(app_config['app']['max_routes'])
-    except KeyError as e:
-        msg = 'App configuration value "max_routes" not found in app_conf.yml.'
-        logger.error(f'{msg} Error:')
-        logger.error(e)
-        return {'msg': msg}, 500
-    return { 'max_routes': max_routes } , 200
+    return { 'max_routes': MAX_ROUTES } , 200
 
 def get_traceroutes(src, dest, search_duration, end_time, num_tracert):
     """ Retrieves array of traceroutes from Prometheus """
     logger.info(f'Getting traceroutes')
 
     traceroutes = []
-    
+
+    if num_tracert > MAX_ROUTES:
+        return {'msg': f'Number of traceroutes requested ({num_tracert}) exceeds MAX_ROUTES configuration value ({MAX_ROUTES})'}, 400
+
     try:
         tracert_metric_range_data, interval_seconds = generate_metric_range_data(src, dest, search_duration, end_time, num_tracert)
     except ValueError as e:
