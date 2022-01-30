@@ -60,11 +60,15 @@ components:
       type: object
       required:
         - ttl
+        - host
         - trace_time
       properties:
         ttl:
           type: integer
           example: 4
+        host:
+          type: string
+          example: 171.55.90.12
         trace_time:
           type: string
           format: date-time
