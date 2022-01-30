@@ -59,6 +59,10 @@ def process_duration(duration, end_time):
         raise ValueError(f"Time unit {duration[-1]} is not supported. The following units are supported: s, m, h, d")
     return datetime.fromtimestamp((datetime.timestamp(end_time) - duration))
 
+
+def max_routes():
+    return { 'max_routes': int(app_config['app']['max_routes']) } , 200
+
 def get_traceroutes(src, dest, search_duration, end_time, num_tracert):
     """ Retrieves array of traceroutes from Prometheus """
     logger.info(f'Getting traceroutes')

@@ -54,6 +54,22 @@ paths:
                   $ref: '#/components/schemas/TraceRoute'
         '400':
           description: bad input parameter
+  /max-routes:
+    get:
+      summary: obtains max number of routes to graph in the frontend
+      operationId: app.max_routes
+      responses:
+        '200':
+          description: obtained value from backend
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  max_routes:
+                    type: integer
+                    description: Maximum number of traceroutes to graph
+                    example: 8
 components:
   schemas:
     TraceRoute:
