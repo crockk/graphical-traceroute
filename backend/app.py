@@ -75,7 +75,7 @@ def max_routes():
     return { 'max_routes': MAX_ROUTES } , 200
 
 def validate_params(src, dest, num_tracert, duration, end_time):
-    """ Validates query parameters src, dest, and num_tracert """
+    """ Validates query parameters """
     msg = 'An unknown error occurred.'
     if num_tracert > MAX_ROUTES:
         msg = f'Number of traceroutes requested ({num_tracert}) exceeds MAX_ROUTES configuration value ({MAX_ROUTES})'
@@ -172,6 +172,52 @@ def generate_traceroutes(tracert_metric_range_data, num_tracert, start_time, end
         traceroutes.append({'hops': hops, 'trace_time': datetime.fromtimestamp(this_timestamp)})
         this_timestamp = this_timestamp - interval_seconds
     return traceroutes
+
+def get_sources():
+    try:
+        sources = get_label_values('instance')
+    except KeyError as e:
+        return {'msg': str(e)}, 404
+    return sources, 200
+
+def get_destinations():
+    try:
+        destinations = get_label_values('target')
+    except KeyError as e:
+        return {'msg': str(e)}, 404
+    return destinations, 200
+
+def get_label_values(label):
+    label_df = get_label_df()
+    labels = label_df[label].unique()
+    return labels.tolist()
+
+def get_label_df():
+    """ Get dataframe from prometheus with a small time range, specifically for extracting label values for src and dest """
+    # Generate PromQL query
+    end_time = datetime.now()
+    start_time = parse_datetime('10m')
+
+    metric = 'mtr_rtt_seconds'
+    label_config = {
+        'type': 'mean'
+        }
+
+    range_data = prom.get_metric_range_data(
+        metric_name=metric,
+        label_config=label_config,
+        start_time=start_time,
+        end_time=end_time,
+    )
+
+    try:
+        df = MetricRangeDataFrame(range_data)
+    except KeyError as e:
+        msg = f'No metrics found within the specified range ({start_time} - {end_time}). Please try widening the range.'
+        logger.error(f'{msg}')
+        raise KeyError(msg)
+    return df
+
 
 if __name__ == '__main__':
     startup()

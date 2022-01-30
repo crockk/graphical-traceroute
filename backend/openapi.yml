@@ -90,6 +90,54 @@ paths:
                     type: integer
                     description: Maximum number of traceroutes to graph
                     example: 8
+  /src:
+    get:
+      summary: obtains traceroutes source instance label from prometheus
+      operationId: app.get_sources
+      responses:
+        '200':
+          description: sources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '404':
+          description: no sources found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    description: error message
+                    example: No label values found for traceroute source
+  /dest:
+    get:
+      summary: obtains traceroutes target label from prometheus
+      operationId: app.get_destinations
+      responses:
+        '200':
+          description: sources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '404':
+          description: no destinations found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    description: error message
+                    example: No label values found for traceroute destination
 components:
   schemas:
     TraceRoute:
