@@ -7,7 +7,7 @@ paths:
   /traceroute:
     get:
       summary: obtains traceroutes from prometheus
-      operationId: getTrace
+      operationId: app.get_traceroutes
       description: |
         By passing in source, destination, time frame obtain an array of 
         traceroutes for the frontend to graph
