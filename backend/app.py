@@ -154,6 +154,7 @@ def generate_traceroutes(tracert_metric_range_data, num_tracert, start_time, end
         logger.error(f'{msg}')
         raise KeyError(msg)
 
+    # TODO: Refactor so that we grab most recent traceroute, then only DIFFERENT traceroutes within the timeframe, up to num_tracert
     this_timestamp = tracert_df.index.max()
     traceroutes = []
     for i in range(num_tracert):
