@@ -23,6 +23,7 @@ with open(log_conf_file, 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
 logger = logging.getLogger('basicLogger')
+logger.info('Starting Graphical Traceroute Backend API service...')
 
 # define global variables
 try:
@@ -37,11 +38,12 @@ except KeyError as e:
 
 # connect to prometheus
 logger.info(f"Attempting to connect to Prometheus at http://{PROMETHEUS_HOST}...")
+prom = PrometheusConnect(url=f"http://{PROMETHEUS_HOST}", disable_ssl=True)
 try:
-    prom = PrometheusConnect(url=f"http://{PROMETHEUS_HOST}", disable_ssl=True)
-except Error as e:
-    logger.info(f"Failed to connect to Prometheus. Error:")
-    logger.info(e)
+    test_connection = prom.get_metric_range_data(metric_name='up')
+except Exception as e:
+    logger.error(f"Failed to connect to Prometheus. Error:")
+    logger.error(e)
     exit(1)
 logger.info(f"Connection to Prometheus succeeded.")
 
