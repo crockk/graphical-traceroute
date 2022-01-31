@@ -54,7 +54,7 @@ def startup():
 
     logger.info(f"Backend running on localhost:{LISTEN_PORT}")
     logger.info(f"Make requests at http://localhost:{LISTEN_PORT}/ui")
-    
+
     app.run(port=LISTEN_PORT, use_reloader=True, debug=False)
 
 def process_duration(duration, end_time):
@@ -114,7 +114,7 @@ def get_traceroutes(src, dest, search_duration, start_dt, num_tracert):
 
     # Use query params to get metrics
     tracert_metric_range_data, interval_seconds, start_time, end_time = generate_metric_range_data(src, dest, search_duration, start_dt, num_tracert)
-        
+
     # Generate traceroutes from metric range data
     try:
         traceroutes = generate_traceroutes(tracert_metric_range_data, num_tracert, start_time, end_time, interval_seconds)
@@ -136,7 +136,7 @@ def generate_metric_range_data(src, dest, search_duration, start_dt, num_tracert
     metric = 'mtr_rtt_seconds'
     label_config = {
         'instance': instance,
-        'target': target, 
+        'target': target,
         'type': 'mean'
         }
 
