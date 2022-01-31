@@ -6,7 +6,10 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "prepare": "npm run smui-theme-light && npm run smui-theme-dark",
+    "smui-theme-light": "smui-theme compile public/static/smui.css -i src/theme",
+    "smui-theme-dark": "smui-theme compile public/static/smui-dark.css -i src/theme/dark"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
