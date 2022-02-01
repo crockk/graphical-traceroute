@@ -70,7 +70,16 @@
 	let selectedDateRaw;
   let dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
 
-  $: selectedDate = selectedDateRaw ? selectedDateRaw.toLocaleString() : undefined;
+  $: selectedDate = selectedDateRaw ? formateDateString(selectedDateRaw) : undefined;
+
+  function formateDateString(dateObj) {
+    if(dateObj){
+      dateObj.setMinutes( dateObj.getMinutes() - dateObj.getTimezoneOffset() );
+      return dateObj.toISOString().replace("T"," ").split(".")[0];
+    } else {
+      return undefined;
+    };
+  };
 
 </script>
 
