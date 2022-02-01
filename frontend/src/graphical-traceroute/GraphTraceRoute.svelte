@@ -1,13 +1,13 @@
 <script>
 
-  import QueryInput from './QueryInput.svelte'
+  import TraceRouteParams from './TraceRouteParams.svelte'
   let srcNode;
   let destNode;
   let numRoutes;
 
 </script>
 
-<QueryInput
+<TraceRouteParams
   bind:srcNode={srcNode}
   bind:destNode={destNode}
   bind:numRoutes={numRoutes}
