@@ -6,6 +6,7 @@
   import FormField from '@smui/form-field';
   import Icon from '@smui/select/icon';
   import LayoutGrid, { Cell, InnerGrid } from '@smui/layout-grid';
+  import Textfield from '@smui/textfield';
 
   const backendBaseURL = "http://localhost:8100"
 
@@ -39,8 +40,27 @@
   getSrcNodes();
   getDestNodes();
 
-  let searchDurationTypes = ["s", "m", "h", "d"];
-  let searchDurationType = searchDurationTypes[2];
+  let searchDurationTypes = [
+    {
+      typeName: "seconds",
+      symbol:"s"
+    },
+    {
+      typeName: "minutes",
+      symbol:"m"
+    },
+    {
+      typeName: "hours",
+      symbol:"h"
+    },
+    {
+      typeName: "days",
+      symbol:"d"
+    }
+  ];
+  let searchDurationType = searchDurationTypes[2].symbol;
+
+  let searchDuration = 6;
 
 </script>
 
@@ -133,6 +153,20 @@
   <Cell span="1">
   </Cell>
 
+  <Cell span="2">
+    <Textfield
+      variant="filled"
+      bind:value={searchDuration}
+      label="Search Duration"
+      type="number"
+      suffix="{ searchDurationType }"
+      required
+    />
+  </Cell>
+
+  <Cell span="1">
+  </Cell>
+
   <Cell span="3">
     <Select
       class="shaped-outlined"
@@ -145,13 +179,13 @@
       <!-- <Option value="" /> -->
 
       {#each searchDurationTypes as durationTypes}
-        <Option value={durationTypes}>{durationTypes}</Option>
+        <Option value={durationTypes.symbol}>{durationTypes.typeName}</Option>
       {/each}
 
     </Select>
   </Cell>
 
-  <Cell span="8">
+  <Cell span="5">
   </Cell>
 
   <!-- ROW -->
