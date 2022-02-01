@@ -23,7 +23,7 @@
 <br>
 
 <Paper color="primary" variant="outlined" class="mdc-theme--primary">
-  <Title>Outlined Primary Paper with Primary Text</Title>
+  <Title>Chosen Trace Route Query Parameters</Title>
   <Content>
 
     <DataTable table$aria-label="Traceroute query list" style="max-width: 100%;">
