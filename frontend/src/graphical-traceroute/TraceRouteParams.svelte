@@ -7,6 +7,7 @@
   import Icon from '@smui/select/icon';
   import LayoutGrid, { Cell, InnerGrid } from '@smui/layout-grid';
   import Textfield from '@smui/textfield';
+  import DatePicker from "@beyonk/svelte-datepicker/src/components/DatePicker.svelte";
 
   const backendBaseURL = "http://localhost:8100"
 
@@ -61,6 +62,12 @@
   let searchDurationType = searchDurationTypes[2].symbol;
 
   let searchDuration = 6;
+
+	let selectedDateRaw;
+  let dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
+
+  let selectedDate;
+  $: selectedDate = selectedDateRaw ? selectedDateRaw.toLocaleString() : "";
 
 </script>
 
@@ -185,7 +192,16 @@
     </Select>
   </Cell>
 
-  <Cell span="5">
+  <Cell span="3">
+    <DatePicker
+      time={true}
+      bind:selected={ selectedDateRaw }
+      format={ dateTimeFormat }
+    >
+    </DatePicker>
+  </Cell>
+
+  <Cell span="2">
   </Cell>
 
   <!-- ROW -->
