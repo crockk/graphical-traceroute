@@ -1,6 +1,8 @@
 <script>
 
+  import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
   import TraceRouteParams from './TraceRouteParams.svelte'
+
   let srcNode;
   let destNode;
   let numRoutes;
@@ -17,10 +19,34 @@
   bind:selectedDate={selectedDate}
 />
 
+<DataTable table$aria-label="Traceroute query list" style="max-width: 100%;">
+  <Head>
+    <Row>
+      <Cell numeric>Number of Traceroutes</Cell>
+      <Cell>Source Node</Cell>
+      <Cell>Destination Node</Cell>
+      <Cell>Search Duration</Cell>
+      <Cell>Start Date</Cell>
+    </Row>
+  </Head>
+  <Body>
+    <Row>
+      <Cell>
+        {numRoutes}
+      </Cell>
+      <Cell>
+        {srcNode}
+      </Cell>
+      <Cell>
+        {destNode}
+      </Cell>
+      <Cell>
+        {searchDuration}
+      </Cell>
+      <Cell>
+        {selectedDate}
+      </Cell>
 
-
-{srcNode}
-{destNode}
-{numRoutes}
-{searchDuration}
-{selectedDate}
+    </Row>
+  </Body>
+</DataTable>
