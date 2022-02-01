@@ -5,6 +5,7 @@
   import Slider from '@smui/slider';
   import FormField from '@smui/form-field';
   import Icon from '@smui/select/icon';
+  import LayoutGrid, { Cell, InnerGrid } from '@smui/layout-grid';
 
   const backendBaseURL = "http://localhost:8100"
 
@@ -40,67 +41,104 @@
 
 </script>
 
+<LayoutGrid>
 
-<Button variant="raised"
-    on:click={getMaxRoutes}
-    on:click={getSrcNodes}
-    on:click={getDestNodes}
-  >
-  <Icon class="material-icons">refresh</Icon>
-  <Label>Update route data</Label>
-</Button>
+  <!-- ROW -->
+  <Cell span="1">
+  </Cell>
 
+  <Cell span="8">
+    {#await promiseMaxRoutes then maxRoutes}
+      {#if maxRoutes}
+        <Slider
+          bind:value={numRoutes}
+          min={1}
+          max={ maxRoutes.max_routes }
+          discrete
+          tickMarks
+          input$aria-label="Tick mark slider for max trace routes"
+        />
+      {/if}
+    {/await}
+  </Cell>
 
-<Select
-  class="shaped-outlined"
-  variant="outlined"
-  bind:value={srcNode}
-  label="Source Node"
-  required
->
-  <Icon class="material-icons" slot="leadingIcon">computer</Icon>
-  <!-- <Option value="" /> -->
+  <Cell span="1">
 
-  {#await promiseSrcNodes then srcNodes}
-    {#if srcNodes}
-      {#each srcNodes as sNode}
-        <Option value={sNode}>{sNode}</Option>
-      {/each}
-    {/if}
-  {/await}
-</Select>
+    <Button variant="raised" disabled>
+      <Label>{ numRoutes }</Label>
+    </Button>
 
+  </Cell>
 
-<Select
-  class="shaped-outlined"
-  variant="outlined"
-  bind:value={destNode}
-  label="Destination Node"
-  required
->
-  <Icon class="material-icons" slot="leadingIcon">dns</Icon>
-  <!-- <Option value="" /> -->
+  <Cell span="2">
+  </Cell>
 
-  {#await promiseDestNodes then destNodes}
-    {#if destNodes}
-      {#each destNodes as dNode}
-        <Option value={dNode}>{dNode}</Option>
-      {/each}
-    {/if}
-  {/await}
-</Select>
+  <!-- ROW -->
+  <Cell span="1">
+  </Cell>
 
-<div>
-{#await promiseMaxRoutes then maxRoutes}
-  {#if maxRoutes}
-    <Slider
-      bind:value={numRoutes}
-      min={1}
-      max={ maxRoutes.max_routes }
-      discrete
-      tickMarks
-      input$aria-label="Tick mark slider for max trace routes"
-    />
-  {/if}
-{/await}
-</div>
+  <Cell span="3">
+
+    <Select
+      class="shaped-outlined"
+      variant="outlined"
+      bind:value={srcNode}
+      label="Source Node"
+      required
+    >
+      <Icon class="material-icons" slot="leadingIcon">computer</Icon>
+      <!-- <Option value="" /> -->
+
+      {#await promiseSrcNodes then srcNodes}
+        {#if srcNodes}
+          {#each srcNodes as sNode}
+            <Option value={sNode}>{sNode}</Option>
+          {/each}
+        {/if}
+      {/await}
+    </Select>
+
+  </Cell>
+
+  <Cell span="3">
+
+    <Select
+      class="shaped-outlined"
+      variant="outlined"
+      bind:value={destNode}
+      label="Destination Node"
+      required
+    >
+      <Icon class="material-icons" slot="leadingIcon">dns</Icon>
+      <!-- <Option value="" /> -->
+
+      {#await promiseDestNodes then destNodes}
+        {#if destNodes}
+          {#each destNodes as dNode}
+            <Option value={dNode}>{dNode}</Option>
+          {/each}
+        {/if}
+      {/await}
+    </Select>
+
+  </Cell>
+
+  <Cell span="5">
+  </Cell>
+
+  <!-- ROW -->
+  <Cell span="9">
+  </Cell>
+
+  <Cell span="3">
+    <Button variant="raised"
+        on:click={getMaxRoutes}
+        on:click={getSrcNodes}
+        on:click={getDestNodes}
+      >
+      <Icon class="material-icons">refresh</Icon>
+      <Label>Route Parameters</Label>
+    </Button>
+  </Cell>
+
+</LayoutGrid>
