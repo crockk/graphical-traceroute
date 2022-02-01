@@ -61,7 +61,7 @@
   ];
   let searchDurationType = searchDurationTypes[2].symbol;
 
-  let searchDuration = 6;
+  let searchDurationLength = 6;
 
 	let selectedDateRaw;
   let dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
@@ -163,7 +163,7 @@
   <Cell span="2">
     <Textfield
       variant="filled"
-      bind:value={searchDuration}
+      bind:value={searchDurationLength}
       label="Search Duration"
       type="number"
       suffix="{ searchDurationType }"
