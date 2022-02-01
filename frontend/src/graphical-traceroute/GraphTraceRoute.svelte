@@ -4,6 +4,8 @@
   let srcNode;
   let destNode;
   let numRoutes;
+  let searchDuration;
+  let selectedDate;
 
 </script>
 
@@ -11,6 +13,8 @@
   bind:srcNode={srcNode}
   bind:destNode={destNode}
   bind:numRoutes={numRoutes}
+  bind:searchDuration={searchDuration}
+  bind:selectedDate={selectedDate}
 />
 
 
@@ -18,3 +22,5 @@
 {srcNode}
 {destNode}
 {numRoutes}
+{searchDuration}
+{selectedDate}

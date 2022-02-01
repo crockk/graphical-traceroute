@@ -63,13 +63,13 @@
 
   let searchDurationLength = 6;
 
-  let searchDuration;
+  export let searchDuration;
   $: searchDuration = searchDurationLength + searchDurationType
 
 	let selectedDateRaw;
   let dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
 
-  let selectedDate;
+  export let selectedDate;
   $: selectedDate = selectedDateRaw ? selectedDateRaw.toLocaleString() : "";
 
 </script>
