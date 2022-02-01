@@ -9,6 +9,12 @@
   import Textfield from '@smui/textfield';
   import DatePicker from "@beyonk/svelte-datepicker/src/components/DatePicker.svelte";
 
+  export let srcNode;
+  export let destNode;
+  export let numRoutes = 1;
+  export let searchDuration;
+  export let selectedDate;
+
   const backendBaseURL = "http://localhost:8100"
 
   let promiseMaxRoutes;
@@ -32,10 +38,6 @@
       mode: 'cors',
     }).then((x) => x.json());
   };
-
-  export let srcNode;
-  export let destNode;
-  export let numRoutes = 1;
 
   getMaxRoutes();
   getSrcNodes();
@@ -63,13 +65,11 @@
 
   let searchDurationLength = 6;
 
-  export let searchDuration;
   $: searchDuration = searchDurationLength + searchDurationType
 
 	let selectedDateRaw;
   let dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
 
-  export let selectedDate;
   $: selectedDate = selectedDateRaw ? selectedDateRaw.toLocaleString() : undefined;
 
 </script>
