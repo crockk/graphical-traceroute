@@ -62,15 +62,15 @@
     {/await}
   </Cell>
 
-  <Cell span="1">
+  <Cell span="2">
 
     <Button variant="raised" disabled>
-      <Label>{ numRoutes }</Label>
+      <Label>Max Routes: { numRoutes }</Label>
     </Button>
 
   </Cell>
 
-  <Cell span="2">
+  <Cell span="1">
   </Cell>
 
   <!-- ROW -->
