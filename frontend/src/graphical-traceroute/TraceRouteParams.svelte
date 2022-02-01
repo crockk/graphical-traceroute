@@ -63,6 +63,9 @@
 
   let searchDurationLength = 6;
 
+  let searchDuration;
+  $: searchDuration = searchDurationLength + searchDurationType
+
 	let selectedDateRaw;
   let dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
 
