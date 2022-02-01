@@ -43,7 +43,30 @@
   let topAppBar: TopAppBarComponentDev;
 
 </script>
-
+<svelte:head>
+  <!-- Material Icons -->
+	<link
+	  rel="stylesheet"
+	  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+	/>
+	<!-- Roboto -->
+	<link
+	  rel="stylesheet"
+	  href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700"
+	/>
+	<!-- Roboto Mono -->
+	<link
+	  rel="stylesheet"
+	  href="https://fonts.googleapis.com/css?family=Roboto+Mono"
+	/>
+	<!-- SMUI Styles -->
+	<link rel="stylesheet" href="/static/smui.css" media="(prefers-color-scheme: light)" />
+	<link
+	  rel="stylesheet"
+	  href="/static/smui-dark.css"
+	  media="screen and (prefers-color-scheme: dark)"
+	/>
+</svelte:head>
 
 <TopAppBar bind:this={topAppBar} class="demo-top-app-bar mdc-top-app-bar smui-top-app-bar--static" >
   <Row>
