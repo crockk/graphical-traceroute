@@ -39,6 +39,9 @@
   getSrcNodes();
   getDestNodes();
 
+  let searchDurationTypes = ["s", "m", "h", "d"];
+  let searchDurationType = searchDurationTypes[2];
+
 </script>
 
 <LayoutGrid>
@@ -124,6 +127,31 @@
   </Cell>
 
   <Cell span="5">
+  </Cell>
+
+  <!-- ROW -->
+  <Cell span="1">
+  </Cell>
+
+  <Cell span="3">
+    <Select
+      class="shaped-outlined"
+      variant="outlined"
+      bind:value={searchDurationType}
+      label="Search Duration Type"
+      required
+    >
+      <Icon class="material-icons" slot="leadingIcon">schedule</Icon>
+      <!-- <Option value="" /> -->
+
+      {#each searchDurationTypes as durationTypes}
+        <Option value={durationTypes}>{durationTypes}</Option>
+      {/each}
+
+    </Select>
+  </Cell>
+
+  <Cell span="8">
   </Cell>
 
   <!-- ROW -->
