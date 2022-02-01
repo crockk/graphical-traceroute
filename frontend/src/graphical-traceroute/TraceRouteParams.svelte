@@ -70,7 +70,7 @@
   let dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
 
   export let selectedDate;
-  $: selectedDate = selectedDateRaw ? selectedDateRaw.toLocaleString() : "";
+  $: selectedDate = selectedDateRaw ? selectedDateRaw.toLocaleString() : undefined;
 
 </script>
 
