@@ -7,6 +7,7 @@
   import Icon from '@smui/select/icon';
   import LayoutGrid, { Cell, InnerGrid } from '@smui/layout-grid';
   import Textfield from '@smui/textfield';
+  import Paper, { Title, Content } from '@smui/paper';
   import DatePicker from "@beyonk/svelte-datepicker/src/components/DatePicker.svelte";
 
   export let srcNode;
@@ -83,152 +84,158 @@
 
 </script>
 
-<LayoutGrid>
+<Paper color="primary" variant="outlined" class="mdc-theme--primary">
+  <Title>Outlined Primary Paper with Primary Text</Title>
+  <Content>
 
-  <!-- ROW -->
-  <Cell span="1">
-  </Cell>
+    <LayoutGrid>
 
-  <Cell span="8">
-    {#await promiseMaxRoutes then maxRoutes}
-      {#if maxRoutes}
-        <Slider
-          bind:value={numRoutes}
-          min={1}
-          max={ maxRoutes.max_routes }
-          discrete
-          tickMarks
-          input$aria-label="Tick mark slider for max trace routes"
+      <!-- ROW -->
+      <Cell span="1">
+      </Cell>
+
+      <Cell span="8">
+        {#await promiseMaxRoutes then maxRoutes}
+          {#if maxRoutes}
+            <Slider
+              bind:value={numRoutes}
+              min={1}
+              max={ maxRoutes.max_routes }
+              discrete
+              tickMarks
+              input$aria-label="Tick mark slider for max trace routes"
+            />
+          {/if}
+        {/await}
+      </Cell>
+
+      <Cell span="2">
+
+        <Button variant="raised" disabled>
+          <Label>Max Routes: { numRoutes }</Label>
+        </Button>
+
+      </Cell>
+
+      <Cell span="1">
+      </Cell>
+
+      <!-- ROW -->
+      <Cell span="1">
+      </Cell>
+
+      <Cell span="3">
+
+        <Select
+          class="shaped-outlined"
+          variant="outlined"
+          bind:value={srcNode}
+          label="Source Node"
+          required
+        >
+          <Icon class="material-icons" slot="leadingIcon">computer</Icon>
+          <!-- <Option value="" /> -->
+
+          {#await promiseSrcNodes then srcNodes}
+            {#if srcNodes}
+              {#each srcNodes as sNode}
+                <Option value={sNode}>{sNode}</Option>
+              {/each}
+            {/if}
+          {/await}
+        </Select>
+
+      </Cell>
+
+      <Cell span="3">
+
+        <Select
+          class="shaped-outlined"
+          variant="outlined"
+          bind:value={destNode}
+          label="Destination Node"
+          required
+        >
+          <Icon class="material-icons" slot="leadingIcon">dns</Icon>
+          <!-- <Option value="" /> -->
+
+          {#await promiseDestNodes then destNodes}
+            {#if destNodes}
+              {#each destNodes as dNode}
+                <Option value={dNode}>{dNode}</Option>
+              {/each}
+            {/if}
+          {/await}
+        </Select>
+
+      </Cell>
+
+      <Cell span="5">
+      </Cell>
+
+      <!-- ROW -->
+      <Cell span="1">
+      </Cell>
+
+      <Cell span="2">
+        <Textfield
+          variant="filled"
+          bind:value={searchDurationLength}
+          label="Search Duration"
+          type="number"
+          suffix="{ searchDurationType }"
+          required
         />
-      {/if}
-    {/await}
-  </Cell>
+      </Cell>
 
-  <Cell span="2">
+      <Cell span="1">
+      </Cell>
 
-    <Button variant="raised" disabled>
-      <Label>Max Routes: { numRoutes }</Label>
-    </Button>
+      <Cell span="3">
+        <Select
+          class="shaped-outlined"
+          variant="outlined"
+          bind:value={searchDurationType}
+          label="Search Duration Type"
+          required
+        >
+          <Icon class="material-icons" slot="leadingIcon">schedule</Icon>
+          <!-- <Option value="" /> -->
 
-  </Cell>
-
-  <Cell span="1">
-  </Cell>
-
-  <!-- ROW -->
-  <Cell span="1">
-  </Cell>
-
-  <Cell span="3">
-
-    <Select
-      class="shaped-outlined"
-      variant="outlined"
-      bind:value={srcNode}
-      label="Source Node"
-      required
-    >
-      <Icon class="material-icons" slot="leadingIcon">computer</Icon>
-      <!-- <Option value="" /> -->
-
-      {#await promiseSrcNodes then srcNodes}
-        {#if srcNodes}
-          {#each srcNodes as sNode}
-            <Option value={sNode}>{sNode}</Option>
+          {#each searchDurationTypes as durationTypes}
+            <Option value={durationTypes.symbol}>{durationTypes.typeName}</Option>
           {/each}
-        {/if}
-      {/await}
-    </Select>
 
-  </Cell>
+        </Select>
+      </Cell>
 
-  <Cell span="3">
+      <Cell span="3">
+        <DatePicker
+          time={true}
+          bind:selected={ selectedDateRaw }
+          format={ dateTimeFormat }
+        >
+        </DatePicker>
+      </Cell>
 
-    <Select
-      class="shaped-outlined"
-      variant="outlined"
-      bind:value={destNode}
-      label="Destination Node"
-      required
-    >
-      <Icon class="material-icons" slot="leadingIcon">dns</Icon>
-      <!-- <Option value="" /> -->
+      <Cell span="2">
+      </Cell>
 
-      {#await promiseDestNodes then destNodes}
-        {#if destNodes}
-          {#each destNodes as dNode}
-            <Option value={dNode}>{dNode}</Option>
-          {/each}
-        {/if}
-      {/await}
-    </Select>
+      <!-- ROW -->
+      <Cell span="9">
+      </Cell>
 
-  </Cell>
+      <Cell span="3">
+        <Button variant="raised"
+            on:click={getMaxRoutes}
+            on:click={getSrcNodes}
+            on:click={getDestNodes}
+          >
+          <Icon class="material-icons">refresh</Icon>
+          <Label>Route Parameters</Label>
+        </Button>
+      </Cell>
 
-  <Cell span="5">
-  </Cell>
-
-  <!-- ROW -->
-  <Cell span="1">
-  </Cell>
-
-  <Cell span="2">
-    <Textfield
-      variant="filled"
-      bind:value={searchDurationLength}
-      label="Search Duration"
-      type="number"
-      suffix="{ searchDurationType }"
-      required
-    />
-  </Cell>
-
-  <Cell span="1">
-  </Cell>
-
-  <Cell span="3">
-    <Select
-      class="shaped-outlined"
-      variant="outlined"
-      bind:value={searchDurationType}
-      label="Search Duration Type"
-      required
-    >
-      <Icon class="material-icons" slot="leadingIcon">schedule</Icon>
-      <!-- <Option value="" /> -->
-
-      {#each searchDurationTypes as durationTypes}
-        <Option value={durationTypes.symbol}>{durationTypes.typeName}</Option>
-      {/each}
-
-    </Select>
-  </Cell>
-
-  <Cell span="3">
-    <DatePicker
-      time={true}
-      bind:selected={ selectedDateRaw }
-      format={ dateTimeFormat }
-    >
-    </DatePicker>
-  </Cell>
-
-  <Cell span="2">
-  </Cell>
-
-  <!-- ROW -->
-  <Cell span="9">
-  </Cell>
-
-  <Cell span="3">
-    <Button variant="raised"
-        on:click={getMaxRoutes}
-        on:click={getSrcNodes}
-        on:click={getDestNodes}
-      >
-      <Icon class="material-icons">refresh</Icon>
-      <Label>Route Parameters</Label>
-    </Button>
-  </Cell>
-
-</LayoutGrid>
+    </LayoutGrid>
+  </Content>
+</Paper>
