@@ -3,22 +3,17 @@
   import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
   import TraceRouteParams from './TraceRouteParams.svelte'
   import Paper, { Title, Content } from '@smui/paper';
-
-  let srcNode;
-  let destNode;
-  let numRoutes;
-  let searchDuration;
-  let selectedDate;
+  import {
+    srcNode,
+    destNode,
+    numRoutes,
+    searchDuration,
+    selectedDate
+  } from '../store.js'
 
 </script>
 
-<TraceRouteParams
-  bind:srcNode={srcNode}
-  bind:destNode={destNode}
-  bind:numRoutes={numRoutes}
-  bind:searchDuration={searchDuration}
-  bind:selectedDate={selectedDate}
-/>
+<TraceRouteParams/>
 
 <br>
 
@@ -39,19 +34,19 @@
       <Body>
         <Row>
           <Cell>
-            {numRoutes}
+            {$numRoutes}
           </Cell>
           <Cell>
-            {srcNode}
+            {$srcNode}
           </Cell>
           <Cell>
-            {destNode}
+            {$destNode}
           </Cell>
           <Cell>
-            {searchDuration}
+            {$searchDuration}
           </Cell>
           <Cell>
-            {selectedDate}
+            {$selectedDate}
           </Cell>
 
         </Row>

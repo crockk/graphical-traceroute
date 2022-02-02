@@ -10,12 +10,14 @@
   import Paper, { Title, Content } from '@smui/paper';
   import DatePicker from "@beyonk/svelte-datepicker/src/components/DatePicker.svelte";
   import axios from "axios";
-
-  export let srcNode;
-  export let destNode;
-  export let numRoutes = 1;
-  export let searchDuration;
-  export let selectedDate;
+  import {
+    srcNode,
+    destNode,
+    numRoutes,
+    searchDuration,
+    selectedDate
+  } from '../store.js'
+	import { onMount } from 'svelte';
 
   const backendBaseURL = "http://localhost:8100"
 
@@ -61,12 +63,12 @@
 
   let searchDurationLength = 6;
 
-  $: searchDuration = searchDurationLength + searchDurationType
+  $: $searchDuration = searchDurationLength + searchDurationType
 
 	let selectedDateRaw;
   let dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
 
-  $: selectedDate = selectedDateRaw ? formateDateString(selectedDateRaw) : undefined;
+  $: $selectedDate = selectedDateRaw ? formateDateString(selectedDateRaw) : undefined;
 
   function formateDateString(dateObj) {
     if(dateObj){
@@ -76,6 +78,15 @@
       return undefined;
     };
   };
+
+  onMount(() => {
+    // Manually add min and max attributes to search duration length input field
+    let searchDurationFieldID = "searchDurationField"
+    let searchDurationField = document.getElementById(searchDurationFieldID);
+    let searchDurationInputField = searchDurationField.getElementsByTagName("input")[0];
+    searchDurationInputField.setAttribute("max",1000)
+    searchDurationInputField.setAttribute("min",1)
+	});
 
 </script>
 
@@ -93,7 +104,7 @@
         {#await promiseMaxRoutes then maxRoutes}
           {#if maxRoutes}
             <Slider
-              bind:value={numRoutes}
+              bind:value={$numRoutes}
               min={1}
               max={ maxRoutes.max_routes }
               discrete
@@ -107,7 +118,7 @@
       <Cell span="2">
 
         <Button variant="raised" disabled>
-          <Label>Max Routes: { numRoutes }</Label>
+          <Label>Max Routes: { $numRoutes }</Label>
         </Button>
 
       </Cell>
@@ -124,7 +135,7 @@
         <Select
           class="shaped-outlined"
           variant="outlined"
-          bind:value={srcNode}
+          bind:value={$srcNode}
           label="Source Node"
           required
         >
@@ -147,7 +158,7 @@
         <Select
           class="shaped-outlined"
           variant="outlined"
-          bind:value={destNode}
+          bind:value={$destNode}
           label="Destination Node"
           required
         >
@@ -174,6 +185,7 @@
 
       <Cell span="2">
         <Textfield
+          id="searchDurationField"
           variant="filled"
           bind:value={searchDurationLength}
           label="Search Duration"
