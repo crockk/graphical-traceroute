@@ -10,10 +10,12 @@
     destNode,
     numRoutes,
     searchDuration,
-    selectedDate
+    selectedDate,
+    backendBaseURL
   } from '../store.js'
 
-  const backendBaseURL = "http://localhost:8100"
+  // export let backendBaseURL;
+
 
   export let traceroutes = [];
 
@@ -29,7 +31,7 @@
       num_tracert: $numRoutes
     };
 
-    traceroutes = await axios.get(backendBaseURL + '/traceroute', { params: params }).then((x) => x.data);
+    traceroutes = await axios.get($backendBaseURL + '/traceroute', { params: params }).then((x) => x.data);
   };
 
 </script>

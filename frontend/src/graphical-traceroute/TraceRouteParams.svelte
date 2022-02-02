@@ -15,26 +15,28 @@
     destNode,
     numRoutes,
     searchDuration,
-    selectedDate
+    selectedDate,
+    backendBaseURL
   } from '../store.js'
 	import { onMount } from 'svelte';
 
-  const backendBaseURL = "http://localhost:8100"
+  // const backendBaseURL = "http://localhost:8100"
+  // export let backendBaseURL;
 
   let promiseMaxRoutes;
   let promiseSrcNodes;
   let promiseDestNodes;
 
   function getMaxRoutes() {
-    promiseMaxRoutes = axios.get(backendBaseURL + '/max-routes').then((x) => x.data);
+    promiseMaxRoutes = axios.get($backendBaseURL + '/max-routes').then((x) => x.data);
   };
 
   function getSrcNodes() {
-    promiseSrcNodes = axios.get(backendBaseURL + '/src').then((x) => x.data);
+    promiseSrcNodes = axios.get($backendBaseURL + '/src').then((x) => x.data);
   };
 
   function getDestNodes() {
-    promiseDestNodes = axios.get(backendBaseURL + '/dest').then((x) => x.data);
+    promiseDestNodes = axios.get($backendBaseURL + '/dest').then((x) => x.data);
   };
 
   getMaxRoutes();
