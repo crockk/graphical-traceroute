@@ -5,7 +5,8 @@ const destNode = writable(undefined);
 const numRoutes = writable(1);
 const searchDuration = writable(undefined);
 const selectedDate = writable(undefined);
+const tracerouteQueryResults = writable(undefined);
 
 const backendBaseURL = readable("http://localhost:8100");
 
-export {srcNode, destNode, numRoutes, searchDuration, selectedDate, backendBaseURL};
+export {srcNode, destNode, numRoutes, searchDuration, selectedDate, backendBaseURL, tracerouteQueryResults};

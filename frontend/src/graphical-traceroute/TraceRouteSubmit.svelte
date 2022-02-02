@@ -11,6 +11,7 @@
     numRoutes,
     searchDuration,
     selectedDate,
+    tracerouteQueryResults,
     backendBaseURL
   } from '../store.js'
 
@@ -32,6 +33,7 @@
     };
 
     traceroutes = await axios.get($backendBaseURL + '/traceroute', { params: params }).then((x) => x.data);
+    $tracerouteQueryResults = traceroutes;
   };
 
 </script>
