@@ -1,6 +1,6 @@
 <script>
   import Button from '@smui/button';
-  import { Label } from '@smui/common';
+  import { Label, Icon as CommonIcon } from '@smui/common';
   import Select, { Option } from '@smui/select';
   import Slider from '@smui/slider';
   import FormField from '@smui/form-field';
@@ -240,7 +240,7 @@
             on:click={getSrcNodes}
             on:click={getDestNodes}
           >
-          <Icon class="material-icons">refresh</Icon>
+          <CommonIcon class="material-icons">refresh</CommonIcon>
           <Label>Route Parameters</Label>
         </Button>
       </Cell>
