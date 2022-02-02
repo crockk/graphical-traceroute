@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-typescript": "^8.0.0",
     "@tsconfig/svelte": "^2.0.0",
@@ -30,6 +31,7 @@
   },
   "dependencies": {
     "@beyonk/svelte-datepicker": "github:beyonk-adventures/svelte-datepicker",
+    "axios": "0.21.4",
     "sirv-cli": "^2.0.0",
     "svelte-material-ui": "^6.0.0-beta.13"
   }
