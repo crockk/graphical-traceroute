@@ -9,6 +9,7 @@
   import Textfield from '@smui/textfield';
   import Paper, { Title, Content } from '@smui/paper';
   import DatePicker from "@beyonk/svelte-datepicker/src/components/DatePicker.svelte";
+  import axios from "axios";
 
   export let srcNode;
   export let destNode;
@@ -23,21 +24,15 @@
   let promiseDestNodes;
 
   function getMaxRoutes() {
-    promiseMaxRoutes = fetch(backendBaseURL + '/max-routes', {
-      mode: 'cors',
-    }).then((x) => x.json());
+    promiseMaxRoutes = axios.get(backendBaseURL + '/max-routes').then((x) => x.data);
   };
 
   function getSrcNodes() {
-    promiseSrcNodes = fetch(backendBaseURL + '/src', {
-      mode: 'cors',
-    }).then((x) => x.json());
+    promiseSrcNodes = axios.get(backendBaseURL + '/src').then((x) => x.data);
   };
 
   function getDestNodes() {
-    promiseDestNodes = fetch(backendBaseURL + '/dest', {
-      mode: 'cors',
-    }).then((x) => x.json());
+    promiseDestNodes = axios.get(backendBaseURL + '/dest').then((x) => x.data);
   };
 
   getMaxRoutes();
