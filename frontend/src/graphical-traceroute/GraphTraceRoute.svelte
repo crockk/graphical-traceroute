@@ -9,6 +9,7 @@
     destNode,
     numRoutes,
     searchDuration,
+    tracerouteQueryResults,
     selectedDate
   } from '../store.js'
 
@@ -19,3 +20,7 @@
 <br>
 
 <TraceRouteSubmit/>
+
+<br>
+
+{JSON.stringify($tracerouteQueryResults)}
