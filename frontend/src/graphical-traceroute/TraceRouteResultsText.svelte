@@ -32,20 +32,19 @@
 </script>
 
 {#if (! $tracerouteQueryResults)}
+  <LayoutGrid>
 
-<LayoutGrid>
+    <!-- ROW -->
+    <LayoutCell span="1">
+    </LayoutCell>
 
-  <!-- ROW -->
-  <LayoutCell span="1">
-  </LayoutCell>
+    <LayoutCell span="4">
+      No traceroutes found
+    </LayoutCell>
 
-  <LayoutCell span="4">
-    No traceroutes found
-  </LayoutCell>
-
-  <LayoutCell span="7">
-  </LayoutCell>
-</LayoutGrid>
+    <LayoutCell span="7">
+    </LayoutCell>
+  </LayoutGrid>
 {/if}
 
 <Accordion multiple>
