@@ -7,6 +7,8 @@ const searchDuration = writable(undefined);
 const selectedDate = writable(undefined);
 const tracerouteQueryResults = writable(undefined);
 
+const maxRoutes = writable(1);
+
 const backendBaseURL = readable("http://localhost:8100");
 
-export {srcNode, destNode, numRoutes, searchDuration, selectedDate, backendBaseURL, tracerouteQueryResults};
+export {srcNode, destNode, numRoutes, searchDuration, selectedDate, backendBaseURL, tracerouteQueryResults, maxRoutes};
