@@ -81,7 +81,7 @@
 
                   <Body>
 
-                    {#each traceroute.hops as hop}
+                    {#each traceroute.hops.sort( hopCompare ) as hop}
 
                       <Row>
 
