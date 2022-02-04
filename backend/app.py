@@ -161,7 +161,8 @@ def generate_traceroutes(tracert_metric_range_data, num_tracert, start_time, end
         except KeyError as e:
             msg = f'No metrics found within the specified range ({start_time} - {end_time}). Please try widening the range.'
             logger.error(f'{msg}')
-            raise KeyError(msg)
+            # raise KeyError(msg)
+            continue
         for hop in hop_vals:
             this_hop = {}
             this_hop['host'] = hop[0]
