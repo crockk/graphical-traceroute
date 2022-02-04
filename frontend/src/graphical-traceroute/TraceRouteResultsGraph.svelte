@@ -40,7 +40,7 @@
 
   onMount(() => {
     getMaxRoutes();
-    $tracerouteQueryResults = mockRouteData;
+    // $tracerouteQueryResults = mockRouteData;
 	});
 
   $: console.log(mockRouteData);
