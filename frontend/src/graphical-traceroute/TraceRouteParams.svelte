@@ -93,40 +93,29 @@
 </script>
 
 <Paper color="primary" variant="outlined" class="mdc-theme--primary">
-  <Title>Select Trace Route Query Parameters</Title>
+  <Title>
+    <LayoutGrid>
+      <Cell span="9">
+        Select Trace Route Query Parameters
+
+      </Cell>
+
+      <Cell span="3">
+        <Button variant="raised"
+            on:click={getMaxRoutes}
+            on:click={getSrcNodes}
+            on:click={getDestNodes}
+          >
+          <CommonIcon class="material-icons">refresh</CommonIcon>
+          <Label>Route Parameters</Label>
+        </Button>
+      </Cell>
+    </LayoutGrid>
+
+  </Title>
   <Content>
 
     <LayoutGrid>
-
-      <!-- ROW -->
-      <Cell span="1">
-      </Cell>
-
-      <Cell span="8">
-        {#await promiseMaxRoutes then maxRoutes}
-          {#if maxRoutes}
-            <Slider
-              bind:value={$numRoutes}
-              min={1}
-              max={ maxRoutes.max_routes }
-              discrete
-              tickMarks
-              input$aria-label="Tick mark slider for max trace routes"
-            />
-          {/if}
-        {/await}
-      </Cell>
-
-      <Cell span="2">
-
-        <Button variant="raised" disabled>
-          <Label>Max Routes: { $numRoutes }</Label>
-        </Button>
-
-      </Cell>
-
-      <Cell span="1">
-      </Cell>
 
       <!-- ROW -->
       <Cell span="1">
@@ -231,18 +220,33 @@
       </Cell>
 
       <!-- ROW -->
-      <Cell span="9">
+      <Cell span="1">
+      </Cell>
+
+      <Cell span="6">
+        {#await promiseMaxRoutes then maxRoutes}
+          {#if maxRoutes}
+            <Slider
+              bind:value={$numRoutes}
+              min={1}
+              max={ maxRoutes.max_routes }
+              discrete
+              tickMarks
+              input$aria-label="Tick mark slider for max trace routes"
+            />
+          {/if}
+        {/await}
+      </Cell>
+
+      <Cell span="2">
+
+        <Button variant="raised" color="secondary" ripple={false}>
+          <Label>Max Routes: { $numRoutes }</Label>
+        </Button>
+
       </Cell>
 
       <Cell span="3">
-        <Button variant="raised"
-            on:click={getMaxRoutes}
-            on:click={getSrcNodes}
-            on:click={getDestNodes}
-          >
-          <CommonIcon class="material-icons">refresh</CommonIcon>
-          <Label>Route Parameters</Label>
-        </Button>
       </Cell>
 
     </LayoutGrid>
