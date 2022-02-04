@@ -18,7 +18,7 @@ paths:
           required: true
           schema:
             type: string
-            example: localhost:9427
+            example: localhost
         - in: query
           name: dest
           description: destination hostname for the traceroute
@@ -37,7 +37,7 @@ paths:
           schema:
             type: string
             format: date-time
-            example: '2016-08-29 09:12:33'
+            example: '2022-02-02 09:12:33'
         - in: query
           name: num_tracert
           description: number of traceroutes to return in the query 

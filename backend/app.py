@@ -71,7 +71,6 @@ def process_duration(duration, end_time):
         duration = int(duration[:-1]) * 86400
     return datetime.fromtimestamp((datetime.timestamp(end_time) - duration))
 
-
 def max_routes():
     """ Obtains max_routes from backend application configuration """
     return { 'max_routes': MAX_ROUTES } , 200
@@ -95,8 +94,6 @@ def validate_params(src, dest, num_tracert, duration, start_dt):
         logger.error(f'{msg}')
         raise ValueError(msg)
 
-    # end_re_str = '^(now|([0-9]*[1-9][0-9]*(s|m|h|d)))$'
-    # end_re = re.compile(end_re_str)
     try:
         datetime.strptime(start_dt, '%Y-%m-%d %H:%M:%S')
     except ValueError:
@@ -131,20 +128,15 @@ def generate_metric_range_data(src, dest, search_duration, start_dt, num_tracert
     start_time = process_duration(search_duration, end_time)
     interval_seconds = ((end_time - start_time).seconds / num_tracert)
 
-    instance = src
+    instance = src + ':.*'
     target = dest
 
     # Generate PromQL query from query params
     metric = 'mtr_rtt_seconds'
-    label_config = {
-        'instance': instance,
-        'target': target,
-        'type': 'mean'
-        }
+    label_config = metric + f"{{instance=~'{instance}', target='{target}', type='mean'}}"
 
     tracert_metric_range_data = prom.get_metric_range_data(
-        metric_name=metric,
-        label_config=label_config,
+        label_config,
         start_time=start_time,
         end_time=end_time,
     )
@@ -181,7 +173,7 @@ def generate_traceroutes(tracert_metric_range_data, num_tracert, start_time, end
 
 def get_sources():
     try:
-        sources = get_label_values('instance')
+        sources = get_label_values('host')
     except KeyError as e:
         return {'msg': str(e)}, 404
     return sources, 200
