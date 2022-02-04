@@ -12,6 +12,8 @@ from datetime import datetime, timedelta
 from prometheus_api_client import PrometheusConnect, PrometheusApiClientException, MetricsList, Metric, MetricRangeDataFrame
 from prometheus_api_client.utils import parse_datetime
 
+from mock_tracert import mock_tracert_df_1, mock_tracert_df_2
+
 # set up logging and app configuration
 app_conf_file = "app_conf.yml"
 log_conf_file = "log_conf.yml"
@@ -151,25 +153,32 @@ def generate_traceroutes(tracert_metric_range_data, num_tracert, start_time, end
         logger.error(f'{msg}')
         raise KeyError(msg)
 
-    # TODO: Refactor so that we grab most recent traceroute, then only DIFFERENT traceroutes within the timeframe, up to num_tracert
-    this_timestamp = tracert_df.index.max()
     traceroutes = []
-    for i in range(num_tracert):
+
+    # DON'T DELETE - MOCK TRACERT DATA USE FOR TESTING
+    # frames = [mock_tracert_df_1, mock_tracert_df_2, tracert_df]
+    # tracert_df = pd.concat(frames)
+
+    tracert_df = tracert_df[::-1] # sort df in descending order, most recent first
+
+    # this may come in handy at some point
+    i_df = tracert_df.head(2).index.values.tolist()
+    prometheus_scrape_interval = i_df[0] - i_df[1]
+
+    # it is 1:45am and this took me way longer than it should have but it is way faster now and i am no longer doing like 5 nested loops
+    # you can use the mock tracert data above^ to test
+    tracert_df_unique = tracert_df.drop_duplicates(subset=['path'], keep='first', ignore_index=False)
+    unique_indices = [float(i) for i in list(dict.fromkeys(tracert_df_unique.index.values.tolist()))]
+    for i in unique_indices:
+        tracert = tracert_df.loc[i,['path', 'ttl']].values
         hops = []
-        try:
-            hop_vals = tracert_df.loc[this_timestamp, ["path", "ttl"]].values
-        except KeyError as e:
-            msg = f'No metrics found within the specified range ({start_time} - {end_time}). Please try widening the range.'
-            logger.error(f'{msg}')
-            # raise KeyError(msg)
-            continue
-        for hop in hop_vals:
+        for hop in tracert:
             this_hop = {}
             this_hop['host'] = hop[0]
             this_hop['ttl'] = int(hop[1])
             hops.append(this_hop)
-        traceroutes.append({'hops': hops, 'trace_time': datetime.fromtimestamp(this_timestamp)})
-        this_timestamp = this_timestamp - interval_seconds
+        tracert = {'hops': hops, 'trace_time': datetime.fromtimestamp(i)}
+        traceroutes.append(tracert)
     return traceroutes
 
 def get_sources():
