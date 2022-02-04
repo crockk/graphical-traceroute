@@ -63,9 +63,17 @@
       let rt = $tracerouteQueryResults[curIndex]
       if (curTtl <= rt.hops.length) {
         host = rt.hops.sort( hopCompare )[curTtl - 1].host;
-      }
+      } else {
+
+        console.log("trctr host: " + host);
+        console.log(curTtl);
+        console.log(rt.hops.length);
+      };
+    } else {
+
+      console.log("trctr host: " + host);
     };
-    console.log("trctr host: " + host);
+
     return host;
   };
 
@@ -136,27 +144,23 @@
 
             {#if index != 0 && hop.host != previosTraceRouteHost(index, hop.ttl)}
 
-              { circleY = svgConfig.vNodeDist + svgConfig.vInitDist }
-
-
-              { pathY = svgConfig.vNodeDist + svgConfig.vInitDist }
+              { circleY = svgConfig.vNodeDist * (index)+ svgConfig.vInitDist }
 
             {:else}
-              { pathY = svgConfig.vInitDist }
 
               { circleY = svgConfig.vInitDist }
 
             {/if}
 
-            <!-- {#if previousHopDiffers(index, hop.ttl)}
+            {#if index != 0 && hop.ttl < traceroute.hops.length && nextHopDiffers(index, hop.ttl)}
 
-              { pathY = svgConfig.vNodeDist + svgConfig.vInitDist }
+              { pathY = svgConfig.vNodeDist * (index)+ svgConfig.vInitDist }
 
             {:else}
 
               { pathY = svgConfig.vInitDist }
 
-            {/if} -->
+            {/if}
 
             {#if hop.ttl < traceroute.hops.length }
               <path fill="none" stroke="red"
