@@ -5,6 +5,7 @@
   import LayoutGrid, { Cell } from '@smui/layout-grid';
 
   import TraceRouteResultsText from './TraceRouteResultsText.svelte'
+  import TraceRouteResultsGraph from './TraceRouteResultsGraph.svelte'
 
   const resultPages = [
     { id: 1,
@@ -12,7 +13,7 @@
       title: "Text Results",
     },
     { id: 2,
-      component: TraceRouteResultsText,
+      component: TraceRouteResultsGraph,
       title: "Graph Results",
     }
   ];
