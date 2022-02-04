@@ -178,7 +178,10 @@ def generate_traceroutes(tracert_metric_range_data, num_tracert, start_time, end
             this_hop['ttl'] = int(hop[1])
             hops.append(this_hop)
         tracert = {'hops': hops, 'trace_time': datetime.fromtimestamp(i)}
-        traceroutes.append(tracert)
+        if len(traceroutes) < num_tracert:
+            traceroutes.append(tracert)
+        else:
+            break
     return traceroutes
 
 def get_sources():
