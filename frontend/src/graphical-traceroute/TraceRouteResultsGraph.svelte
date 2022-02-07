@@ -131,6 +131,24 @@
     return false;
   };
 
+  function pathInfoToSvgStr(pathInfo) {
+    let moveToStr = "M " + (svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 1)) + "," + (svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel)
+    let lineStr = "v 25";
+
+    if (pathInfo.startYLevel == pathInfo.endYLevel) {
+      lineStr = "h " + svgConfig.hNodeDist;
+    } else if (pathInfo.startYLevel < pathInfo.endYLevel) {
+
+      lineStr = "q " + (0) + "," + (svgConfig.vNodeDist * pathInfo.endYLevel) + " " + (svgConfig.hNodeDist) + "," + (svgConfig.vNodeDist * ( pathInfo.endYLevel - pathInfo.startYLevel));
+
+    } else {
+
+      lineStr = "q " + (svgConfig.hNodeDist) + "," + (0) + " " + (svgConfig.hNodeDist) + "," + (svgConfig.vNodeDist * ( pathInfo.endYLevel - pathInfo.startYLevel));
+
+    };
+    return moveToStr + " " + lineStr
+  };
+
 </script>
 
 {#if (! $tracerouteQueryResults)}
@@ -164,8 +182,7 @@
 
           <path fill="none" stroke="red"
             d="
-              M { svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 1) },{ svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel }
-              l { svgConfig.hNodeDist },{ svgConfig.vNodeDist * (pathInfo.endYLevel - pathInfo.startYLevel) }
+              {pathInfoToSvgStr(pathInfo)}
             "
           />
 
