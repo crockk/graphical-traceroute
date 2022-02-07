@@ -165,7 +165,7 @@
           <path fill="none" stroke="red"
             d="
               M { svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 1) },{ svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel }
-              L { svgConfig.hInitDist + svgConfig.hNodeDist * pathInfo.endTtl },{ svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.endYLevel }
+              l { svgConfig.hNodeDist },{ svgConfig.vNodeDist * (pathInfo.endYLevel - pathInfo.startYLevel) }
             "
           />
 
