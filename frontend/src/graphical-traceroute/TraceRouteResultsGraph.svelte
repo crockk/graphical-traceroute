@@ -93,25 +93,15 @@
         } else {
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].yLevel;
-          endPath = true;
         };
 
         if (curTtl > 0) {
-          if (!trcrtPathEnded[trcrtIndex]) {
-            pathList.push({
-              startYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel,
-              endYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
-              endTtl: curTtl
-            });
-          }
-
-          if (endPath) {
-            trcrtPathEnded[trcrtIndex] = true;
-          };
+          pathList.push({
+            startYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel,
+            endYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
+            endTtl: curTtl
+          });
         };
-
-        endPath = false;
-
       });
     };
 
