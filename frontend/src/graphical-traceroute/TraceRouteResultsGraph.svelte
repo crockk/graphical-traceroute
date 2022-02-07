@@ -28,8 +28,9 @@
   onMount(() => {
     getMaxRoutes();
     // $tracerouteQueryResults = mockRouteData;
-    parsedTraceroutes = parseTraceroutes()
 	});
+
+  $: $tracerouteQueryResults ? refreshTracerouteGraph() : "$tracerouteQueryResults set to nullable val."
 
   const svgConfig = {
     width: 1200,
@@ -43,6 +44,11 @@
 
   let parsedTraceroutes;
   $: console.log(parsedTraceroutes);
+
+  function refreshTracerouteGraph() {
+    console.log("refreshing traceroutes graph.")
+    parsedTraceroutes = parseTraceroutes()
+  }
 
   function parseTraceroutes() {
     let circleList = [];
@@ -132,20 +138,90 @@
   };
 
   function pathInfoToSvgStr(pathInfo) {
-    let moveToStr = "M " + (svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 1)) + "," + (svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel)
-    let lineStr = "v 25";
+
+    let lineStr;
+
+    let moveX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 1);
+    let moveY = svgConfig.vInitDist + svgConfig.vNodeDist * (pathInfo.startYLevel);
+    let moveToStr = "M " + moveX + "," + moveY;
 
     if (pathInfo.startYLevel == pathInfo.endYLevel) {
       lineStr = "h " + svgConfig.hNodeDist;
-    } else if (pathInfo.startYLevel < pathInfo.endYLevel) {
+    } else {
 
-      lineStr = "q " + (0) + "," + (svgConfig.vNodeDist * pathInfo.endYLevel) + " " + (svgConfig.hNodeDist) + "," + (svgConfig.vNodeDist * ( pathInfo.endYLevel - pathInfo.startYLevel));
+      let controlX;
+      let controlY;
+
+      let endX;
+      let endY;
+
+      if (pathInfo.startYLevel < pathInfo.endYLevel) {
+
+        moveX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5);
+        moveY = svgConfig.vInitDist + svgConfig.vNodeDist * (pathInfo.startYLevel + 0.5);
+        moveToStr = "M " + moveX + "," + moveY;
+
+        controlX = 0;
+        controlY = svgConfig.vNodeDist * (pathInfo.endYLevel - 0.5);
+
+        endX = svgConfig.hNodeDist * 0.5;
+        endY = svgConfig.vNodeDist * ( pathInfo.endYLevel - pathInfo.startYLevel - 0.5);
+
+      } else {
+
+        controlX = svgConfig.hNodeDist * 0.5;
+        controlY = 0;
+
+        endX = svgConfig.hNodeDist * 0.5;
+        endY = svgConfig.vNodeDist * ( pathInfo.endYLevel - pathInfo.startYLevel + 0.5);
+
+      };
+
+      let controlPoint = controlX + "," + controlY;
+      let endPoint = endX + "," + endY;
+
+      lineStr = "q " + controlPoint + " " + endPoint + " " + pathComplimentSection(pathInfo);
+    };
+    return moveToStr + " " + lineStr
+  };
+
+  function pathComplimentSection(pathInfo) {
+
+    let moveX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5);
+    let moveY = svgConfig.vInitDist + svgConfig.vNodeDist * (pathInfo.endYLevel + 0.5);
+
+    let controlX;
+    let controlY;
+
+    let endX;
+    let endY;
+
+    if (pathInfo.startYLevel < pathInfo.endYLevel) {
+
+      moveX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 1);
+      moveY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel;
+
+      controlX = svgConfig.hNodeDist * 0.5;
+      controlY = 0;
+
+      endX = svgConfig.hNodeDist * 0.5;
+      endY = svgConfig.vNodeDist * 0.5;
 
     } else {
 
-      lineStr = "q " + (svgConfig.hNodeDist) + "," + (0) + " " + (svgConfig.hNodeDist) + "," + (svgConfig.vNodeDist * ( pathInfo.endYLevel - pathInfo.startYLevel));
+      controlX = 0;
+      controlY = svgConfig.vNodeDist * -0.5;
 
+      endX = svgConfig.hNodeDist * 0.5;
+      endY = svgConfig.vNodeDist * -0.5;
     };
+
+    let moveToStr = "M " + moveX + "," + moveY;
+    let controlPoint = controlX + "," + controlY;
+    let endPoint = endX + "," + endY;
+
+    let lineStr = "q " + controlPoint + " " + endPoint;
+
     return moveToStr + " " + lineStr
   };
 
