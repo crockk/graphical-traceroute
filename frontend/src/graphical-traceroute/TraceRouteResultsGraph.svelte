@@ -57,6 +57,8 @@
     let maxTrcrtLength = $tracerouteQueryResults.sort(hopLengthCompare)[0].hops.length;
 
     // TODO: sort tracerouteList by trcrtTime, newest to oldest.
+    // TODO: sort each traceroute.hop list by ttl.
+    //       Currently a bug where clicking the submit button multiple times makes everything out of order
 
     let trcrtPathEnded = Array($tracerouteQueryResults.length).fill(false);
     let endPath = false;
