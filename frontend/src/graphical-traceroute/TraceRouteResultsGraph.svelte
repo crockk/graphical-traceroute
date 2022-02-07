@@ -16,36 +16,20 @@
 
   import mockRouteData from './mockRouteData.js'
 
-  function hopCompare( a, b ) {
-    if ( a.ttl < b.ttl ){
-      return -1;
-    }
-    if ( a.ttl > b.ttl ){
-      return 1;
-    }
-    return 0;
-  }
-
   async function getMaxRoutes() {
     $maxRoutes = await axios.get($backendBaseURL + '/max-routes').then((x) => x.data.max_routes);
   };
 
   function updatePanelOpenList(index){
     panelOpenList[index] = !panelOpenList[index];
-  }
-
-  $: console.dir($tracerouteQueryResults ? $tracerouteQueryResults[0].hops.sort( hopCompare ) : undefined)
-
+  };
   $: panelOpenList = new Array($maxRoutes).fill(false);
 
   onMount(() => {
     getMaxRoutes();
     // $tracerouteQueryResults = mockRouteData;
+    parsedTraceroutes = parseTraceroutes()
 	});
-
-  $: console.log(mockRouteData);
-  let circleY;
-  let pathY;
 
   const svgConfig = {
     width: 1200,
@@ -57,61 +41,106 @@
     nodeCircR: 10 // nodeCircleRadius
   }
 
-  function traceRouteHost(curIndex, curTtl) {
-    let host = "";
-    if (curIndex < $tracerouteQueryResults.length) {
-      let rt = $tracerouteQueryResults[curIndex]
-      if (curTtl <= rt.hops.length) {
-        host = rt.hops.sort( hopCompare )[curTtl - 1].host;
-      } else {
+  let parsedTraceroutes;
+  $: console.log(parsedTraceroutes);
 
-        console.log("trctr host: " + host);
-        console.log(curTtl);
-        console.log(rt.hops.length);
-      };
-    } else {
+  function parseTraceroutes() {
+    let circleList = [];
+    let pathList = [];
 
-      console.log("trctr host: " + host);
+    let maxTrcrtLength = $tracerouteQueryResults.sort(hopLengthCompare)[0].hops.length;
+
+    // TODO: sort tracerouteList by trcrtTime, newest to oldest.
+
+    let trcrtPathEnded = Array($tracerouteQueryResults.length).fill(false);
+    let endPath = false;
+
+    for (let curTtl = 0; curTtl < maxTrcrtLength; curTtl++) {
+      $tracerouteQueryResults.forEach(function (curTrcrt, trcrtIndex) {
+        // console.dir(trcrtIndex);
+        // console.dir(curTrcrt);
+
+        if (trcrtIndex == 0) {
+
+          circleList.push({
+            cx: curTtl,
+            cy: 0
+          });
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = 0;
+
+        } else if (curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl)) {
+
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = true;
+
+          if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].differs) {
+            // console.log("prev not differs", curTtl, trcrtIndex)
+
+            $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex -1].hops[curTtl].yLevel + 1;
+
+          } else {
+            // console.log("prev differs", curTtl, trcrtIndex)
+
+            $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel;
+
+          };
+
+          circleList.push({
+            cx: curTtl,
+            cy: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
+          });
+
+        } else {
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].yLevel;
+          endPath = true;
+        };
+
+        if (curTtl > 0) {
+          if (!trcrtPathEnded[trcrtIndex]) {
+            pathList.push({
+              startYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel,
+              endYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
+              endTtl: curTtl
+            });
+          }
+
+          if (endPath) {
+            trcrtPathEnded[trcrtIndex] = true;
+          };
+        };
+
+        endPath = false;
+
+      });
     };
 
-    return host;
+    return {
+      circleList: circleList,
+      pathList: pathList,
+    };
   };
 
-  function previosTraceRouteHost(curIndex, curTtl) {
-    if(curIndex >= 1){
-      return traceRouteHost(curIndex - 1, curTtl);
+  function hopLengthCompare(a, b) {
+    if ( a.hops.length < b.hops.length ) {
+      return -1;
     };
-    console.log("previosTraceRouteHost default");
-    return "";
+    if ( a.hops.length > b.hops.length ) {
+      return 1;
+    };
+    return 0;
   };
 
-  function nextTraceRouteHost(curIndex, curTtl) {
-    if(curIndex < $tracerouteQueryResults.length){
-      console.log("here");
-      return traceRouteHost(curIndex + 1, curTtl);
+  function curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl) {
+    if (curTtl < curTrcrt.hops.length && curTtl > 0) {
+      let curHost = curTrcrt.hops[curTtl].host;
+      let prevHost = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].host;
+      // console.log(curHost, prevHost)
+      return curHost != prevHost;
     };
-    console.log("nextTraceRouteHost default");
-    console.log($tracerouteQueryResults.length)
-    console.log(curIndex)
-
-    return "";
-  };
-
-  function previousHopDiffers(curIndex, curTtl) {
-    if(curTtl >= (1 + 1)){
-      console.log("here")
-      return previosTraceRouteHost(curIndex, curTtl - 1) == previosTraceRouteHost(curIndex + 1, curTtl -1);
-    };
-    console.log("previousHopDiffers default");
-
-    console.log(curIndex >= 2)
-    console.log(curTtl>= 2)
-
     return false;
-  }
-  function nextHopDiffers(curIndex, curTtl) {
-    return traceRouteHost(curIndex, curTtl + 1) != previosTraceRouteHost(curIndex, curTtl + 1)
-  }
+  };
+
 </script>
 
 {#if (! $tracerouteQueryResults)}
@@ -137,54 +166,34 @@
 
     <LayoutCell span="11">
 
+      {#if parsedTraceroutes}
       <svg width="{ svgConfig.width }" height="{ svgConfig.width * svgConfig.aspectRatio }">
 
-        {#each $tracerouteQueryResults as traceroute, index}
-          {#each traceroute.hops.sort( hopCompare ) as hop}
-
-            {#if index != 0 && hop.host != previosTraceRouteHost(index, hop.ttl)}
-
-              { circleY = svgConfig.vNodeDist * (index)+ svgConfig.vInitDist }
-
-            {:else}
-
-              { circleY = svgConfig.vInitDist }
-
-            {/if}
-
-            {#if index != 0 && hop.ttl < traceroute.hops.length && nextHopDiffers(index, hop.ttl)}
-
-              { pathY = svgConfig.vNodeDist * (index)+ svgConfig.vInitDist }
-
-            {:else}
-
-              { pathY = svgConfig.vInitDist }
-
-            {/if}
-
-            {#if hop.ttl < traceroute.hops.length }
-              <path fill="none" stroke="red"
-                d="
-                  M { svgConfig.hInitDist + svgConfig.hNodeDist * hop.ttl },{ pathY }
-                  h { svgConfig.hNodeDist }
-                "
-              />
-            {/if}
+        {#each parsedTraceroutes.pathList as pathInfo}
 
 
-            <circle
-              cx="{ svgConfig.hInitDist + svgConfig.hNodeDist * hop.ttl }"
-              cy="{ circleY }"
-              r="{ svgConfig.nodeCircR }"
-              stroke="green"
-              stroke-width="4"
-              fill="yellow"
-            />
+          <path fill="none" stroke="red"
+            d="
+              M { svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 1) },{ svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel }
+              L { svgConfig.hInitDist + svgConfig.hNodeDist * pathInfo.endTtl },{ svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.endYLevel }
+            "
+          />
 
-          {/each}
+        {/each}
+        {#each parsedTraceroutes.circleList as circleInfo}
+
+          <circle
+            cx="{ svgConfig.hInitDist + svgConfig.hNodeDist * circleInfo.cx }"
+            cy="{ svgConfig.vInitDist + svgConfig.vNodeDist * circleInfo.cy }"
+            r="{ svgConfig.nodeCircR }"
+            stroke="green"
+            stroke-width="4"
+            fill="yellow"
+          />
         {/each}
 
       </svg>
+      {/if}
 
     </LayoutCell>
 
