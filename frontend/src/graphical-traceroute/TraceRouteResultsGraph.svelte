@@ -41,14 +41,15 @@
     vNodeDist: 75, // verticalNodeDistance
     nodeCircR: 10, // nodeCircleRadius
     strokeWidth: 3, //strokeWidth
+    lineOffset: 3  // lineOffset
   }
 
   const colorOptions = [
     "#008000",
-    "#FF0000",
     "#00FFFF",
-    "#FF00FF",
+    "#FF0000",
     "#0000FF",
+    "#FF00FF",
     "#2F4F4F",
     "#FFFF00",
     "#FFA500",
@@ -87,6 +88,7 @@
           });
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = 0;
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = 0;
 
         } else if (curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl)) {
 
@@ -96,11 +98,12 @@
             // console.log("prev not differs", curTtl, trcrtIndex)
 
             $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex -1].hops[curTtl].yLevel + 1;
+            $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = 0;
 
           } else {
             // console.log("prev differs", curTtl, trcrtIndex)
-
             $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel;
+            $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].nodeVisitorNum;
 
           };
 
@@ -112,6 +115,7 @@
         } else {
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].yLevel;
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].nodeVisitorNum + 1;
         };
 
         if (curTtl > 0) {
@@ -120,6 +124,8 @@
             endYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
             endTtl: curTtl,
             colorIndex: trcrtIndex,
+            lineOffsetStart: $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].nodeVisitorNum,
+            lineOffsetEnd: $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum
           });
         };
       });
@@ -160,7 +166,7 @@
     let lineStr;
 
     let moveX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 1);
-    let moveY = svgConfig.vInitDist + svgConfig.vNodeDist * (pathInfo.startYLevel);
+    let moveY = svgConfig.vInitDist + svgConfig.vNodeDist * (pathInfo.startYLevel) + svgConfig.lineOffset * (pathInfo.lineOffsetStart);
     let moveToStr = "M " + moveX + "," + moveY;
 
     if (pathInfo.startYLevel == pathInfo.endYLevel) {
@@ -175,11 +181,11 @@
 
       if (pathInfo.startYLevel < pathInfo.endYLevel) {
 
-        moveX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5);
+        moveX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5) - svgConfig.lineOffset * pathInfo.lineOffsetStart;
         moveY = svgConfig.vInitDist + svgConfig.vNodeDist * (pathInfo.startYLevel + 0.5);
         moveToStr = "M " + moveX + "," + moveY;
 
-        controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5);
+        controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5) - svgConfig.lineOffset * pathInfo.lineOffsetStart;
         controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.endYLevel;
 
         endX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl);
@@ -187,10 +193,10 @@
 
       } else {
 
-        controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5);
-        controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel;
+        controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5) + svgConfig.lineOffset * pathInfo.lineOffsetStart;
+        controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel + svgConfig.lineOffset * pathInfo.lineOffsetStart;
 
-        endX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5);
+        endX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5) + svgConfig.lineOffset * pathInfo.lineOffsetEnd;
         endY = svgConfig.vInitDist + svgConfig.vNodeDist * ( pathInfo.endYLevel + 0.5);
 
       };
@@ -205,7 +211,7 @@
 
   function pathComplimentSection(pathInfo) {
 
-    let moveX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5);
+    let moveX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5) + svgConfig.lineOffset * pathInfo.lineOffsetEnd;
     let moveY = svgConfig.vInitDist + svgConfig.vNodeDist * (pathInfo.endYLevel + 0.5);
 
     let controlX;
@@ -217,21 +223,21 @@
     if (pathInfo.startYLevel < pathInfo.endYLevel) {
 
       moveX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 1);
-      moveY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel;
+      moveY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel + svgConfig.lineOffset * pathInfo.lineOffsetStart;
 
-      controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5);
-      controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel;
+      controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5)- svgConfig.lineOffset * pathInfo.lineOffsetStart;
+      controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel + svgConfig.lineOffset * pathInfo.lineOffsetStart;
 
-      endX = svgConfig.hInitDist + svgConfig.hNodeDist * 0.5;
+      endX = svgConfig.hInitDist + svgConfig.hNodeDist * 0.5 - svgConfig.lineOffset * pathInfo.lineOffsetStart;
       endY = svgConfig.vInitDist + svgConfig.vNodeDist * 0.5;
 
     } else {
 
-      controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5);
-      controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.endYLevel;
+      controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5) + svgConfig.lineOffset * pathInfo.lineOffsetEnd;
+      controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.endYLevel + svgConfig.lineOffset * pathInfo.lineOffsetEnd;
 
       endX = svgConfig.hInitDist + svgConfig.hNodeDist * ( pathInfo.endTtl);
-      endY = svgConfig.vInitDist + svgConfig.vNodeDist * (pathInfo.endYLevel);
+      endY = svgConfig.vInitDist + svgConfig.vNodeDist * (pathInfo.endYLevel) + svgConfig.lineOffset * pathInfo.lineOffsetEnd;
     };
 
     let moveToStr = "M " + moveX + "," + moveY;
