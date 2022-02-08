@@ -79,11 +79,14 @@
     // Sort the list of hops for each traceroute by ttl, ascending order
     $tracerouteQueryResults.forEach(function (curTrcrt, trcrtIndex) { curTrcrt.hops.sort(hopCompare); });
 
+    // Outer loop iterates over each possible ttl
     for (let curTtl = 0; curTtl < maxTrcrtLength; curTtl++) {
+      // Inner loop iterates over each traceroute in order to access the current ttl
       $tracerouteQueryResults.forEach(function (curTrcrt, trcrtIndex) {
         // console.dir(trcrtIndex);
         // console.dir(curTrcrt);
 
+        // Base case for graphing. The newsest traceroute is plotted as a horizontal line
         if (trcrtIndex == 0) {
 
           circleList.push({
@@ -94,6 +97,8 @@
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = 0;
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = 0;
 
+        // The case where the host of the node to be plotted differes from
+        //    host of the node with the same ttl but in the previuos traceroute
         } else if (curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl)) {
 
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = true;
@@ -116,12 +121,16 @@
             cy: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
           });
 
+        // The case where the host of the node to be plotted does not differes from
+        //    host of the node with the same ttl but in the previuos traceroute
         } else {
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].yLevel;
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].nodeVisitorNum + 1;
         };
 
+        // Paths are defined as going from the previous node to the current node
+        // Nodes with ttl == 0 have no previous node so they are ommited
         if (curTtl > 0) {
           pathList.push({
             startYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel,
