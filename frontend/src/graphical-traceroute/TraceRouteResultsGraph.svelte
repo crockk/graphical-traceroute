@@ -129,7 +129,7 @@
   function tracerouteDateCompare(a, b ) {
     let dateA = new Date(a.trace_time);
     let dateB = new Date(b.trace_time);
-    return dateA - dateB;
+    return dateB - dateA;
   };
 
   function curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl) {
