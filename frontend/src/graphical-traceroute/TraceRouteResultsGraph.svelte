@@ -79,9 +79,6 @@
     // Sort the list of hops for each traceroute by ttl, ascending order
     $tracerouteQueryResults.forEach(function (curTrcrt, trcrtIndex) { curTrcrt.hops.sort(hopCompare); });
 
-    let trcrtPathEnded = Array($tracerouteQueryResults.length).fill(false);
-    let endPath = false;
-
     for (let curTtl = 0; curTtl < maxTrcrtLength; curTtl++) {
       $tracerouteQueryResults.forEach(function (curTrcrt, trcrtIndex) {
         // console.dir(trcrtIndex);
