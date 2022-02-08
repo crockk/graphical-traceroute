@@ -189,7 +189,7 @@
         controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.endYLevel;
 
         endX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl);
-        endY = svgConfig.vInitDist + svgConfig.vNodeDist * ( pathInfo.endYLevel);
+        endY = svgConfig.vInitDist + svgConfig.vNodeDist * ( pathInfo.endYLevel)  + svgConfig.lineOffset * pathInfo.lineOffsetEnd;
 
       } else {
 
@@ -228,7 +228,7 @@
       controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5)- svgConfig.lineOffset * pathInfo.lineOffsetStart;
       controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel + svgConfig.lineOffset * pathInfo.lineOffsetStart;
 
-      endX = svgConfig.hInitDist + svgConfig.hNodeDist * 0.5 - svgConfig.lineOffset * pathInfo.lineOffsetStart;
+      endX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5) - svgConfig.lineOffset * pathInfo.lineOffsetStart;
       endY = svgConfig.vInitDist + svgConfig.vNodeDist * 0.5;
 
     } else {
