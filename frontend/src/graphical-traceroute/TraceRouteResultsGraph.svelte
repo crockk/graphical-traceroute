@@ -64,12 +64,19 @@
   }
 
   function parseTraceroutes() {
+    // List of (cx:int, cy:int) which define the center point of each node to be graphed
+    // center points are defined with unit increments, not pixels.
     let circleList = [];
+    // List of information used define the path from the previos node to the current node
+    // List elements: {startYLevel: int, endYLevel: int, endTtl: int, colorIndex: int, lineOffsetStart: int, lineOffsetEnd: int}
+    // All list element propertiesare defined with unit increments, not pixels.
     let pathList = [];
 
     let maxTrcrtLength = $tracerouteQueryResults.sort(hopLengthCompare)[0].hops.length;
 
+    // Sort traceroute data from backend by trace_time, newest to oldest
     $tracerouteQueryResults.sort(tracerouteDateCompare);
+    // Sort the list of hops for each traceroute by ttl, ascending order
     $tracerouteQueryResults.forEach(function (curTrcrt, trcrtIndex) { curTrcrt.hops.sort(hopCompare); });
 
     let trcrtPathEnded = Array($tracerouteQueryResults.length).fill(false);
