@@ -186,7 +186,7 @@
         moveToStr = "M " + moveX + "," + moveY;
 
         controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5) - svgConfig.lineOffset * pathInfo.lineOffsetStart;
-        controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.endYLevel;
+        controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.endYLevel + svgConfig.lineOffset * pathInfo.lineOffsetEnd;
 
         endX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl);
         endY = svgConfig.vInitDist + svgConfig.vNodeDist * ( pathInfo.endYLevel)  + svgConfig.lineOffset * pathInfo.lineOffsetEnd;
