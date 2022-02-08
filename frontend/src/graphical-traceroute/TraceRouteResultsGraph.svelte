@@ -219,26 +219,26 @@
       moveX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 1);
       moveY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel;
 
-      controlX = svgConfig.hNodeDist * 0.5;
-      controlY = 0;
+      controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5);
+      controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel;
 
-      endX = svgConfig.hNodeDist * 0.5;
-      endY = svgConfig.vNodeDist * 0.5;
+      endX = svgConfig.hInitDist + svgConfig.hNodeDist * 0.5;
+      endY = svgConfig.vInitDist + svgConfig.vNodeDist * 0.5;
 
     } else {
 
-      controlX = 0;
-      controlY = svgConfig.vNodeDist * -0.5;
+      controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5);
+      controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.endYLevel;
 
-      endX = svgConfig.hNodeDist * 0.5;
-      endY = svgConfig.vNodeDist * -0.5;
+      endX = svgConfig.hInitDist + svgConfig.hNodeDist * ( pathInfo.endTtl);
+      endY = svgConfig.vInitDist + svgConfig.vNodeDist * (pathInfo.endYLevel);
     };
 
     let moveToStr = "M " + moveX + "," + moveY;
     let controlPoint = controlX + "," + controlY;
     let endPoint = endX + "," + endY;
 
-    let lineStr = "q " + controlPoint + " " + endPoint;
+    let lineStr = "Q " + controlPoint + " " + endPoint;
 
     return moveToStr + " " + lineStr
   };
