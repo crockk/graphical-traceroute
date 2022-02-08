@@ -60,6 +60,9 @@
     // TODO: sort each traceroute.hop list by ttl.
     //       Currently a bug where clicking the submit button multiple times makes everything out of order
 
+    $tracerouteQueryResults.sort(tracerouteDateCompare);
+    $tracerouteQueryResults.forEach(function (curTrcrt, trcrtIndex) { curTrcrt.hops.sort(hopCompare); });
+
     let trcrtPathEnded = Array($tracerouteQueryResults.length).fill(false);
     let endPath = false;
 
@@ -127,6 +130,16 @@
       return 1;
     };
     return 0;
+  };
+
+  function hopCompare(a, b ) {
+    return a.ttl - b.ttl;
+  };
+
+  function tracerouteDateCompare(a, b ) {
+    let dateA = new Date(a.trace_time);
+    let dateB = new Date(b.trace_time);
+    return dateA - dateB;
   };
 
   function curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl) {
