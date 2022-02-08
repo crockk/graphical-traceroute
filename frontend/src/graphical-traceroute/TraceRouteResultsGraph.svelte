@@ -193,7 +193,7 @@
 
       } else {
 
-        controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5) + svgConfig.lineOffset * pathInfo.lineOffsetStart;
+        controlX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5) + svgConfig.lineOffset * pathInfo.lineOffsetEnd;
         controlY = svgConfig.vInitDist + svgConfig.vNodeDist * pathInfo.startYLevel + svgConfig.lineOffset * pathInfo.lineOffsetStart;
 
         endX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 0.5) + svgConfig.lineOffset * pathInfo.lineOffsetEnd;
