@@ -39,8 +39,20 @@
     vInitDist: 50, // verticalInitialDistance
     hNodeDist: 75, // horizontalNodeDistance
     vNodeDist: 75, // verticalNodeDistance
-    nodeCircR: 10 // nodeCircleRadius
+    nodeCircR: 10, // nodeCircleRadius
+    strokeWidth: 3, //strokeWidth
   }
+
+  const colorOptions = [
+    "#008000",
+    "#FF0000",
+    "#00FFFF",
+    "#FF00FF",
+    "#0000FF",
+    "#2F4F4F",
+    "#FFFF00",
+    "#FFA500",
+  ];
 
   let parsedTraceroutes;
   $: console.log(parsedTraceroutes);
@@ -106,7 +118,8 @@
           pathList.push({
             startYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel,
             endYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
-            endTtl: curTtl
+            endTtl: curTtl,
+            colorIndex: trcrtIndex,
           });
         };
       });
@@ -261,7 +274,7 @@
         {#each parsedTraceroutes.pathList as pathInfo}
 
 
-          <path fill="none" stroke="red"
+          <path fill="none" stroke="{ colorOptions[pathInfo.colorIndex] }" stroke-width="{ svgConfig.strokeWidth }"
             d="
               {pathInfoToSvgStr(pathInfo)}
             "
