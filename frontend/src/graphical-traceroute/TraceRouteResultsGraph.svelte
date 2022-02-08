@@ -119,13 +119,7 @@
   };
 
   function hopLengthCompare(a, b) {
-    if ( a.hops.length < b.hops.length ) {
-      return -1;
-    };
-    if ( a.hops.length > b.hops.length ) {
-      return 1;
-    };
-    return 0;
+    return a.hops.length - b.hops.length;
   };
 
   function hopCompare(a, b ) {
