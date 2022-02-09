@@ -96,9 +96,20 @@
         // If the final node is in fact different, it will still be plotted in the final column but on a different yLevel just like any other node.
         if (maxTrcrtLength > curTrcrt.hops.length && curTtl >= (curTrcrt.hops.length - 2) ) {
           console.log("not enough hops")
-          curTrcrt.hops.splice(-2,0,JSON.parse(JSON.stringify(curTrcrt.hops[curTrcrt.hops.length - 2])));
-          curTrcrt.hops[curTrcrt.hops.length - 2].ttl = curTrcrt.hops[curTrcrt.hops.length - 2].ttl + 1;
-          curTrcrt.hops[curTrcrt.hops.length - 2].placeHolder = true;
+
+          let hopCopyIndex = curTrcrt.hops.length - 2;
+
+          // Use JSON stringify and parse to create deep copy of the hop to be copied
+          let hopDeepCopy = JSON.parse(JSON.stringify(curTrcrt.hops[hopCopyIndex]));
+
+          // Insert the deep copy into the 2nd last position in the array
+          curTrcrt.hops.splice(-2, 0, hopDeepCopy);
+
+          // The ttl of the new hop is one more than the previous hop
+          curTrcrt.hops[hopCopyIndex].ttl = curTrcrt.hops[hopCopyIndex].ttl + 1;
+          // Add property stating this hop is a placeholder to extend the traceroute
+          curTrcrt.hops[hopCopyIndex].placeHolder = true;
+          // The ttl of the last hop should also be incremented
           curTrcrt.hops[curTrcrt.hops.length - 1].ttl = curTrcrt.hops[curTrcrt.hops.length - 1].ttl + 1;
         };
 
