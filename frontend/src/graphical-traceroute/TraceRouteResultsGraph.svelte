@@ -121,12 +121,16 @@
 
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = true;
 
+          // The case where the host of the previous ttl is not different than the host of the previous ttl and previous traceroute (relative to current node)
+          // This is the case where the traceroute branch.
           if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].differs) {
             // console.log("prev not differs", curTtl, trcrtIndex)
 
             $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex -1].hops[curTtl].yLevel + 1;
             $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = 0;
 
+          // The case where the host of the previous ttl is different than the host of the previous ttl and previous traceroute (relative to current node)
+          // This is the case where a branched traceroute continues its branch.
           } else {
             // console.log("prev differs", curTtl, trcrtIndex)
             $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel;
@@ -142,6 +146,7 @@
           };
         // The case where the host of the node to be plotted does not differes from
         //    host of the node with the same ttl but in the previuos traceroute
+        // This is the case where a branched traceroute merges into the previous traceroute
         } else {
           if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
             $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
