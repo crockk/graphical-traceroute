@@ -71,7 +71,7 @@
     // List elements: {startYLevel: int, endYLevel: int, endTtl: int, colorIndex: int, lineOffsetStart: int, lineOffsetEnd: int}
     // All list element propertiesare defined with unit increments, not pixels.
     let pathList = [];
-    $tracerouteQueryResults = mockRouteData;
+    // $tracerouteQueryResults = mockRouteData;
 
     let maxTrcrtLength = $tracerouteQueryResults.sort(hopLengthCompare)[0].hops.length;
 
