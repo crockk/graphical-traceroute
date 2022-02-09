@@ -71,6 +71,7 @@
     // List elements: {startYLevel: int, endYLevel: int, endTtl: int, colorIndex: int, lineOffsetStart: int, lineOffsetEnd: int}
     // All list element propertiesare defined with unit increments, not pixels.
     let pathList = [];
+    $tracerouteQueryResults = mockRouteData;
 
     let maxTrcrtLength = $tracerouteQueryResults.sort(hopLengthCompare)[0].hops.length;
 
@@ -86,20 +87,30 @@
         // console.dir(trcrtIndex);
         // console.dir(curTrcrt);
 
+        if (maxTrcrtLength > curTrcrt.hops.length && curTtl >= (curTrcrt.hops.length - 2) ) {
+          console.log("not enough hops")
+          curTrcrt.hops.splice(-2,0,JSON.parse(JSON.stringify(curTrcrt.hops[curTrcrt.hops.length - 2])));
+          curTrcrt.hops[curTrcrt.hops.length - 2].ttl = curTrcrt.hops[curTrcrt.hops.length - 2].ttl + 1;
+          curTrcrt.hops[curTrcrt.hops.length - 2].placeHolder = true;
+          curTrcrt.hops[curTrcrt.hops.length - 1].ttl = curTrcrt.hops[curTrcrt.hops.length - 1].ttl + 1;
+        };
+
         // Base case for graphing. The newsest traceroute is plotted as a horizontal line
         if (trcrtIndex == 0) {
+          if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
+            circleList.push({
+              cx: curTtl,
+              cy: 0
+            });
+          };
 
-          circleList.push({
-            cx: curTtl,
-            cy: 0
-          });
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = 0;
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = 0;
 
         // The case where the host of the node to be plotted differes from
         //    host of the node with the same ttl but in the previuos traceroute
-        } else if (curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl)) {
+      } else if (curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl) && !$tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
 
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = true;
 
@@ -116,17 +127,24 @@
 
           };
 
-          circleList.push({
-            cx: curTtl,
-            cy: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
-          });
-
+          if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
+            circleList.push({
+              cx: curTtl,
+              cy: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
+            });
+          };
         // The case where the host of the node to be plotted does not differes from
         //    host of the node with the same ttl but in the previuos traceroute
         } else {
-          $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
-          $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].yLevel;
-          $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].nodeVisitorNum + 1;
+          if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
+            $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
+            $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].yLevel;
+            $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].nodeVisitorNum + 1;
+          } else {
+              $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = true;
+              $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel;
+              $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].nodeVisitorNum;
+          };
         };
 
         // Paths are defined as going from the previous node to the current node
@@ -151,7 +169,7 @@
   };
 
   function hopLengthCompare(a, b) {
-    return a.hops.length - b.hops.length;
+    return b.hops.length - a.hops.length;
   };
 
   function hopCompare(a, b ) {
