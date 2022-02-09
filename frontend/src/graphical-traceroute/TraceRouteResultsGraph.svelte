@@ -71,7 +71,7 @@
     // List elements: {startYLevel: int, endYLevel: int, endTtl: int, colorIndex: int, lineOffsetStart: int, lineOffsetEnd: int}
     // All list element propertiesare defined with unit increments, not pixels.
     let pathList = [];
-    // $tracerouteQueryResults = mockRouteData;
+    $tracerouteQueryResults = mockRouteData;
 
     let maxTrcrtLength = $tracerouteQueryResults.sort(hopLengthCompare)[0].hops.length;
 
@@ -87,6 +87,13 @@
         // console.dir(trcrtIndex);
         // console.dir(curTrcrt);
 
+        // If the current traceroute has fewer hops then the traceroute with the most hops,
+        //    then on the 2nd last hop of the shorter traceroute a placeholder node must be added before the the last item in the hop list
+        // The new node must be added before the last node because the final node should be the same for all traceroutes
+        //    ie. final node is the destination IP of the traceroute and should all traceroutes
+        //    The goal is to extend the hop list until the final hop is in the same column as the rest of the traceroutes
+        // This process is repeated until the shorter hop list is the same length as the longest one
+        // If the final node is in fact different, it will still be plotted in the final column but on a different yLevel just like any other node.
         if (maxTrcrtLength > curTrcrt.hops.length && curTtl >= (curTrcrt.hops.length - 2) ) {
           console.log("not enough hops")
           curTrcrt.hops.splice(-2,0,JSON.parse(JSON.stringify(curTrcrt.hops[curTrcrt.hops.length - 2])));
