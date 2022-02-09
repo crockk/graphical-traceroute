@@ -105,6 +105,9 @@
           // Insert the deep copy into the 2nd last position in the array
           curTrcrt.hops.splice(-2, 0, hopDeepCopy);
 
+          // Increment hopCopyIndex AFTER the new item is added, this allows us to index the new item
+          hopCopyIndex++
+
           // The ttl of the new hop is one more than the previous hop
           curTrcrt.hops[hopCopyIndex].ttl = curTrcrt.hops[hopCopyIndex].ttl + 1;
           // Add property stating this hop is a placeholder to extend the traceroute
