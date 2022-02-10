@@ -17,10 +17,7 @@
 
   onMount(() => {
     getMaxRoutes();
-    // $tracerouteQueryResults = mockRouteData;
 	});
-
-  $: $tracerouteQueryResults ? refreshTracerouteGraph() : "$tracerouteQueryResults set to nullable val."
 
   const svgConfig = {
     width: 1200,
@@ -46,7 +43,10 @@
   ];
 
   let parsedTraceroutes;
-  $: console.log(parsedTraceroutes);
+  $: console.dir(parsedTraceroutes);
+
+  // When $tracerouteQueryResults updates, run refreshTracerouteGraph()
+  $: $tracerouteQueryResults ? refreshTracerouteGraph() : console.log("$tracerouteQueryResults set to nullable val.");
 
   function refreshTracerouteGraph() {
     console.log("refreshing traceroutes graph.")
@@ -61,7 +61,7 @@
     // List elements: {startYLevel: int, endYLevel: int, endTtl: int, colorIndex: int, lineOffsetStart: int, lineOffsetEnd: int}
     // All list element propertiesare defined with unit increments, not pixels.
     let pathList = [];
-    $tracerouteQueryResults = mockRouteData;
+    // $tracerouteQueryResults = mockRouteData;
 
     let maxTrcrtLength = $tracerouteQueryResults.sort(hopLengthCompare)[0].hops.length;
 
