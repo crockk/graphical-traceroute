@@ -70,7 +70,7 @@
 
       // Base case for graphing. If the current node is a placeholder, Do Nothing.
       // All required info is added when placegolders are created
-      if ($tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
+      if ($tracerouteQueryResults[trcrtIndex].hops[curTtl].placeholder) {
         ;
 
       // Base case for graphing. The newsest traceroute is plotted as a horizontal line
@@ -171,7 +171,7 @@
           // The ttl of the new hop is one more than the previous hop
           curTrcrt.hops[hopCopyIndex].ttl = curTrcrt.hops[hopCopyIndex].ttl + 1;
           // Add property stating this hop is a placeholder to extend the traceroute
-          curTrcrt.hops[hopCopyIndex].placeHolder = true;
+          curTrcrt.hops[hopCopyIndex].placeholder = true;
           // The ttl of the last hop should also be incremented
           curTrcrt.hops[curTrcrt.hops.length - 1].ttl = curTrcrt.hops[curTrcrt.hops.length - 1].ttl + 1;
 
