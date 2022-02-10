@@ -99,8 +99,12 @@
             cy: 0
           });
 
+          // In the base case there is no previous traceroute to compare to
+          // By default the node does not differ
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
+          // By default the node is at yLevel 0
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = 0;
+          // By default the node is the first visitor to a particular location
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = 0;
 
       // The case where the host of the node to be plotted differes from
@@ -114,14 +118,19 @@
           if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].differs) {
             // console.log("prev not differs", curTtl, trcrtIndex)
 
+            // Because the traceroute is branching, the yLevel increases
             $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex -1].hops[curTtl].yLevel + 1;
+            // Because the traceroute is branching, it will be the first visitor to the new node
             $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = 0;
 
           // The case where the host of the previous ttl is different than the host of the previous ttl and previous traceroute (relative to current node)
           // This is the case where a branched traceroute continues its branch.
           } else {
             // console.log("prev differs", curTtl, trcrtIndex)
+
+            // Because the traceroute is continuing its branch, the new node will be at the same yLevel as the previous node in its traceroute
             $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel;
+            // Because the traceroute is continuing its branch, the new node will be at the same visitor number as the previous node in its traceroute
             $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].nodeVisitorNum;
 
           };
@@ -134,9 +143,13 @@
         // The case where the host of the node to be plotted does not differes from
         //    host of the node with the same ttl but in the previuos traceroute
         // This is the case where a branched traceroute merges into the previous traceroute
+        // This is also the case where a traceroute is following the same flat horizontal path as the first traceroute
         } else {
+          // Because the traceroute has either ended or is ending its branch, the new node does not differ from the node in the previous traceroute and same ttl
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
+          // Because the traceroute has either ended or is ending its branch, the new node will be at the same yLevel as the previous node in its tracerout
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].yLevel;
+          // Because the traceroute has either ended or is ending its branch, the new node will be 1 more visitor number as the node in the previous traceroute and same ttl
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].nodeVisitorNum + 1;
         };
 
@@ -191,20 +204,25 @@
     };
   };
 
+  // Used to sort traceroutes in DESCENDING order by hop length
   function hopLengthCompare(a, b) {
     return b.hops.length - a.hops.length;
   };
 
+  // Used to sort hops in ASCENDING order by ttl
   function hopCompare(a, b ) {
     return a.ttl - b.ttl;
   };
 
+  // Used to sort traceroutes in DESCENDING order by trace time. Newest to oldest
   function tracerouteDateCompare(a, b ) {
     let dateA = new Date(a.trace_time);
     let dateB = new Date(b.trace_time);
     return dateB - dateA;
   };
 
+  // Used to determine if the host of the current traceroute and ttl, differes from
+  //    the host of the previous traceroute and same ttl
   function curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl) {
     if (curTtl < curTrcrt.hops.length && curTtl > 0) {
       let curHost = curTrcrt.hops[curTtl].host;
