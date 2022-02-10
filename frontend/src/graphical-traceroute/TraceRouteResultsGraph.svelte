@@ -92,6 +92,7 @@
       //    host of the node with the same ttl but in the previuos traceroute
       } else if (curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl)) {
 
+          // differ property is true by definition of the condition above. If this code is reaches, differs == true
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = true;
 
           // The case where the host of the previous ttl is not different than the host of the previous ttl and previous traceroute (relative to current node)
@@ -121,7 +122,7 @@
             cy: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
           });
 
-        // The case where the host of the node to be plotted does not differes from
+        // The case where the host of the node to be plotted does not differ from
         //    host of the node with the same ttl but in the previuos traceroute
         // This is the case where a branched traceroute merges into the previous traceroute
         // This is also the case where a traceroute is following the same flat horizontal path as the first traceroute
