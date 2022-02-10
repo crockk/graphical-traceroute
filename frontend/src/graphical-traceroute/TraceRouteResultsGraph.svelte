@@ -1,11 +1,6 @@
 <script lang="ts">
 
-  import DataTable, { Head, Body, Row, Cell as DataCell } from '@smui/data-table';
-  import Paper, { Title, Content } from '@smui/paper';
-  import LayoutGrid, { Cell as LayoutCell, InnerGrid } from '@smui/layout-grid';
-  import Button, { Label } from '@smui/button';
-  import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
-  import IconButton, { Icon } from '@smui/icon-button';
+  import LayoutGrid, { Cell as LayoutCell } from '@smui/layout-grid';
   import axios from "axios";
   import {
     backendBaseURL,
@@ -19,11 +14,6 @@
   async function getMaxRoutes() {
     $maxRoutes = await axios.get($backendBaseURL + '/max-routes').then((x) => x.data.max_routes);
   };
-
-  function updatePanelOpenList(index){
-    panelOpenList[index] = !panelOpenList[index];
-  };
-  $: panelOpenList = new Array($maxRoutes).fill(false);
 
   onMount(() => {
     getMaxRoutes();
