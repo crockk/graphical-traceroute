@@ -7,7 +7,7 @@ const searchDuration = writable(undefined);
 const selectedDate = writable(undefined);
 const tracerouteQueryResults = writable(undefined);
 
-const maxRoutes = writable(1);
+const maxRoutes = writable(2);
 
 const backendBaseURL = readable("http://localhost:8100");
 
