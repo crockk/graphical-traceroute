@@ -24,20 +24,19 @@
   // const backendBaseURL = "http://localhost:8100"
   // export let backendBaseURL;
 
-  let promiseMaxRoutes;
-  let promiseSrcNodes;
-  let promiseDestNodes;
+  let srcNodes = [];
+  let destNodes = [];
 
   async function getMaxRoutes() {
     $maxRoutes = await axios.get($backendBaseURL + '/max-routes').then((x) => x.data.max_routes);
   };
 
-  function getSrcNodes() {
-    promiseSrcNodes = axios.get($backendBaseURL + '/src').then((x) => x.data);
+  async function getSrcNodes() {
+    srcNodes = await axios.get($backendBaseURL + '/src').then((x) => x.data);
   };
 
-  function getDestNodes() {
-    promiseDestNodes = axios.get($backendBaseURL + '/dest').then((x) => x.data);
+  async function getDestNodes() {
+    destNodes = await axios.get($backendBaseURL + '/dest').then((x) => x.data);
   };
 
   getMaxRoutes();
@@ -134,13 +133,9 @@
           <Icon class="material-icons" slot="leadingIcon">computer</Icon>
           <!-- <Option value="" /> -->
 
-          {#await promiseSrcNodes then srcNodes}
-            {#if srcNodes}
-              {#each srcNodes as sNode}
-                <Option value={sNode}>{sNode}</Option>
-              {/each}
-            {/if}
-          {/await}
+          {#each srcNodes as sNode}
+            <Option value={sNode}>{sNode}</Option>
+          {/each}
         </Select>
 
       </Cell>
@@ -157,13 +152,9 @@
           <Icon class="material-icons" slot="leadingIcon">dns</Icon>
           <!-- <Option value="" /> -->
 
-          {#await promiseDestNodes then destNodes}
-            {#if destNodes}
-              {#each destNodes as dNode}
-                <Option value={dNode}>{dNode}</Option>
-              {/each}
-            {/if}
-          {/await}
+          {#each destNodes as dNode}
+            <Option value={dNode}>{dNode}</Option>
+          {/each}
         </Select>
 
       </Cell>
