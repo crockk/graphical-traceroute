@@ -16,7 +16,8 @@
     numRoutes,
     searchDuration,
     selectedDate,
-    backendBaseURL
+    backendBaseURL,
+    maxRoutes
   } from '../store.js'
 	import { onMount } from 'svelte';
 
@@ -27,8 +28,8 @@
   let promiseSrcNodes;
   let promiseDestNodes;
 
-  function getMaxRoutes() {
-    promiseMaxRoutes = axios.get($backendBaseURL + '/max-routes').then((x) => x.data);
+  async function getMaxRoutes() {
+    $maxRoutes = await axios.get($backendBaseURL + '/max-routes').then((x) => x.data.max_routes);
   };
 
   function getSrcNodes() {
@@ -224,18 +225,14 @@
       </Cell>
 
       <Cell span="6">
-        {#await promiseMaxRoutes then maxRoutes}
-          {#if maxRoutes}
-            <Slider
-              bind:value={$numRoutes}
-              min={1}
-              max={ maxRoutes.max_routes }
-              discrete
-              tickMarks
-              input$aria-label="Tick mark slider for max trace routes"
-            />
-          {/if}
-        {/await}
+        <Slider
+          bind:value={$numRoutes}
+          min={1}
+          max={ $maxRoutes }
+          discrete
+          tickMarks
+          input$aria-label="Tick mark slider for max trace routes"
+        />
       </Cell>
 
       <Cell span="2">
