@@ -45,12 +45,12 @@
   }
 
   function parseTraceroutes() {
-    // List of (cx:int, cy:int) which define the center point of each node to be graphed
+    // List of (cx:int, cy:int) which define the center point of each node to be plotted
     // center points are defined with unit increments, not pixels.
     let circleList = [];
-    // List of information used define the path from the previos node to the current node
+    // List of information used define the path from the previous node to the current node
     // List elements: {startYLevel: int, endYLevel: int, endTtl: int, colorIndex: int, lineOffsetStart: int, lineOffsetEnd: int}
-    // All list element propertiesare defined with unit increments, not pixels.
+    // All list element properties are defined with unit increments, not pixels.
     let pathList = [];
     // $tracerouteQueryResults = mockRouteData;
 
