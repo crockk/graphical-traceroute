@@ -87,23 +87,22 @@
         // console.dir(trcrtIndex);
         // console.dir(curTrcrt);
 
-        // Base case for graphing. The newsest traceroute is plotted as a horizontal line
-        if (trcrtIndex == 0) {
-          if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
-            circleList.push({
-              cx: curTtl,
-              cy: 0
-            });
-          };
+      // Base case for graphing. If the current node is a placeholder, Do Nothing.
+      // All required info is added when placegolders are created
+      if ($tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
+        ;
+
+      // Base case for graphing. The newsest traceroute is plotted as a horizontal line
+      } else if (trcrtIndex == 0) {
+          circleList.push({
+            cx: curTtl,
+            cy: 0
+          });
 
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = 0;
           $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = 0;
 
-      // Base case for graphing. If the current node is a placeholder, Do Nothing.
-      // All required info is added when placegolders are created
-      } else if ($tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
-        ;
       // The case where the host of the node to be plotted differes from
       //    host of the node with the same ttl but in the previuos traceroute
       } else if (curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl)) {
