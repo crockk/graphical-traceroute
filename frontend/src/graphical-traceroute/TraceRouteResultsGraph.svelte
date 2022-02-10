@@ -216,21 +216,38 @@
   };
 
   function pathInfoToSvgStr(pathInfo) {
+    // Paths are defined as going from the previous node to the current node
+    // Paths are either horizontal, curved going diagonal down right or, curved going diagonal up right
+    // Paths are drawn left to right, ie pathInfo.endTtl - 1 to pathInfo.endTtl
 
+    // Defines either the horizontal line or quadratic Bézier curve from the previous node to the current node
+    // Appended to the end of moveToStr
     let lineStr;
 
+    // Move to point is the same for horizontal line and curve from a lower yLvel to a higher one
     let moveX = svgConfig.hInitDist + svgConfig.hNodeDist * (pathInfo.endTtl - 1);
+    // Y component of move to point
     let moveY = svgConfig.vInitDist + svgConfig.vNodeDist * (pathInfo.startYLevel) + svgConfig.lineOffset * (pathInfo.lineOffsetStart);
+    // Move to point, formatted with SVG syntax
     let moveToStr = "M " + moveX + "," + moveY;
 
+    // If the start and end yLevel are the same then the line is hoirzontal
+    // Length of the horizontal line is defined by svgConfig.hNodeDist
     if (pathInfo.startYLevel == pathInfo.endYLevel) {
       lineStr = "h " + svgConfig.hNodeDist;
+
+    // If the line is not horizontal then there need to be fancy curves connecting the previous node to the next node
+    // To learn more about quadratic Bézier curves, see this link: https://www.w3.org/TR/SVG/paths.html#PathDataQuadraticBezierCommands
     } else {
 
+      // X component for the control point of quadratic Bézier curve
       let controlX;
+      // Y component for the control point of quadratic Bézier curve
       let controlY;
 
+      // X component for the end point of quadratic Bézier curve
       let endX;
+      // Y component for the end point of quadratic Bézier curve
       let endY;
 
       if (pathInfo.startYLevel < pathInfo.endYLevel) {
@@ -255,7 +272,9 @@
 
       };
 
+      // Control point, formatted with SVG syntax
       let controlPoint = controlX + "," + controlY;
+      // End point, formatted with SVG syntax
       let endPoint = endX + "," + endY;
 
       lineStr = "Q " + controlPoint + " " + endPoint + " " + pathComplimentSection(pathInfo);
