@@ -7,17 +7,8 @@
     tracerouteQueryResults,
     maxRoutes
   } from '../store.js'
-  import { onMount } from 'svelte';
 
   import mockRouteData from './mockRouteData.js'
-
-  async function getMaxRoutes() {
-    $maxRoutes = await axios.get($backendBaseURL + '/max-routes').then((x) => x.data.max_routes);
-  };
-
-  onMount(() => {
-    getMaxRoutes();
-	});
 
   const svgConfig = {
     width: 1200,
