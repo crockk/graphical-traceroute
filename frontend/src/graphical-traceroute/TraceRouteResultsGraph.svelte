@@ -87,6 +87,73 @@
         // console.dir(trcrtIndex);
         // console.dir(curTrcrt);
 
+        // Base case for graphing. The newsest traceroute is plotted as a horizontal line
+        if (trcrtIndex == 0) {
+          if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
+            circleList.push({
+              cx: curTtl,
+              cy: 0
+            });
+          };
+
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = 0;
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = 0;
+
+      // Base case for graphing. If the current node is a placeholder, Do Nothing.
+      // All required info is added when placegolders are created
+      } else if ($tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
+        ;
+      // The case where the host of the node to be plotted differes from
+      //    host of the node with the same ttl but in the previuos traceroute
+      } else if (curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl)) {
+
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = true;
+
+          // The case where the host of the previous ttl is not different than the host of the previous ttl and previous traceroute (relative to current node)
+          // This is the case where the traceroute branch.
+          if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].differs) {
+            // console.log("prev not differs", curTtl, trcrtIndex)
+
+            $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex -1].hops[curTtl].yLevel + 1;
+            $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = 0;
+
+          // The case where the host of the previous ttl is different than the host of the previous ttl and previous traceroute (relative to current node)
+          // This is the case where a branched traceroute continues its branch.
+          } else {
+            // console.log("prev differs", curTtl, trcrtIndex)
+            $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel;
+            $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].nodeVisitorNum;
+
+          };
+
+          circleList.push({
+            cx: curTtl,
+            cy: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
+          });
+
+        // The case where the host of the node to be plotted does not differes from
+        //    host of the node with the same ttl but in the previuos traceroute
+        // This is the case where a branched traceroute merges into the previous traceroute
+        } else {
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].yLevel;
+          $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].nodeVisitorNum + 1;
+        };
+
+        // Paths are defined as going from the previous node to the current node
+        // Nodes with ttl == 0 have no previous node so they are ommited
+        if (curTtl > 0) {
+          pathList.push({
+            startYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel,
+            endYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
+            endTtl: curTtl,
+            colorIndex: trcrtIndex,
+            lineOffsetStart: $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].nodeVisitorNum,
+            lineOffsetEnd: $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum
+          });
+        };
+
         // If the current traceroute has fewer hops then the traceroute with the most hops,
         //    then on the 2nd last hop of the shorter traceroute a placeholder node must be added before the the last item in the hop list
         // The new node must be added before the last node because the final node should be the same for all traceroutes
@@ -114,76 +181,7 @@
           curTrcrt.hops[hopCopyIndex].placeHolder = true;
           // The ttl of the last hop should also be incremented
           curTrcrt.hops[curTrcrt.hops.length - 1].ttl = curTrcrt.hops[curTrcrt.hops.length - 1].ttl + 1;
-        };
 
-        // Base case for graphing. The newsest traceroute is plotted as a horizontal line
-        if (trcrtIndex == 0) {
-          if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
-            circleList.push({
-              cx: curTtl,
-              cy: 0
-            });
-          };
-
-          $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
-          $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = 0;
-          $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = 0;
-
-        // The case where the host of the node to be plotted differes from
-        //    host of the node with the same ttl but in the previuos traceroute
-      } else if (curHostDiffersFromPrevTrcrtSameTtl(curTrcrt, trcrtIndex, curTtl) && !$tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
-
-          $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = true;
-
-          // The case where the host of the previous ttl is not different than the host of the previous ttl and previous traceroute (relative to current node)
-          // This is the case where the traceroute branch.
-          if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].differs) {
-            // console.log("prev not differs", curTtl, trcrtIndex)
-
-            $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex -1].hops[curTtl].yLevel + 1;
-            $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = 0;
-
-          // The case where the host of the previous ttl is different than the host of the previous ttl and previous traceroute (relative to current node)
-          // This is the case where a branched traceroute continues its branch.
-          } else {
-            // console.log("prev differs", curTtl, trcrtIndex)
-            $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel;
-            $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].nodeVisitorNum;
-
-          };
-
-          if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
-            circleList.push({
-              cx: curTtl,
-              cy: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
-            });
-          };
-        // The case where the host of the node to be plotted does not differes from
-        //    host of the node with the same ttl but in the previuos traceroute
-        // This is the case where a branched traceroute merges into the previous traceroute
-        } else {
-          if (!$tracerouteQueryResults[trcrtIndex].hops[curTtl].placeHolder) {
-            $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = false;
-            $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].yLevel;
-            $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex - 1].hops[curTtl].nodeVisitorNum + 1;
-          } else {
-              $tracerouteQueryResults[trcrtIndex].hops[curTtl].differs = true;
-              $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel;
-              $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum = $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].nodeVisitorNum;
-          };
-        };
-
-        // Paths are defined as going from the previous node to the current node
-        // Nodes with ttl == 0 have no previous node so they are ommited
-        if (curTtl > 0) {
-          pathList.push({
-            startYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].yLevel,
-            endYLevel: $tracerouteQueryResults[trcrtIndex].hops[curTtl].yLevel,
-            endTtl: curTtl,
-            colorIndex: trcrtIndex,
-            lineOffsetStart: $tracerouteQueryResults[trcrtIndex].hops[curTtl - 1].nodeVisitorNum,
-            lineOffsetEnd: $tracerouteQueryResults[trcrtIndex].hops[curTtl].nodeVisitorNum
-          });
         };
       });
     };
