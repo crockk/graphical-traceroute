@@ -1,0 +1,23 @@
+---
+version: '3.3'
+services:
+  graphical-trcrt:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: graphical-traceroute:latest
+    # network_mode: host
+    # env_file:
+    #   - ./env
+    ports:
+      - 8100:8100
+      - 8180:80
+    hostname: graphical-traceroute
+    # volumes:
+    #   - /home/azureuser/config/storage:/config
+    #   - /home/azureuser/logs:/logs
+# networks:
+#   traintravellers: {}
+# volumes:
+#   my-db: {}
+#   processing-db: {}
