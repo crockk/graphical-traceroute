@@ -2,12 +2,16 @@ FROM node:17 AS builder
 LABEL maintainer="bakedSpaceTime"
 
 # TODO: copy package.json and package-lock.json to leverage Docker cache
-COPY ./frontend/ /frontend/
-RUN mkdir /frontend/public/static/
+COPY ./frontend/src/theme/ /frontend/src/theme/
+COPY ./frontend/public/ /frontend/public/
+COPY ./frontend/package-lock.json /frontend/package-lock.json
+COPY ./frontend/package.json /frontend/package.json
 
 WORKDIR /frontend
 RUN npm install
 RUN npm run prepare
+
+COPY ./frontend/ /frontend/
 RUN npm run build
 
 
