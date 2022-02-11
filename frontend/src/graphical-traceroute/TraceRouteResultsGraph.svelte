@@ -13,7 +13,7 @@
   const svgConfig = {
     width: 1200,
     height: 675,
-    svgSizeBuffer: 500
+    svgSizeBuffer: 500,
     hInitDist: 50, // horizontalInitialDistance
     vInitDist: 50, // verticalInitialDistance
     hNodeDist: 145, // horizontalNodeDistance
