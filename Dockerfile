@@ -1,4 +1,4 @@
-FROM node:17 AS builder
+FROM node:17-bullseye AS builder
 LABEL maintainer="bakedSpaceTime"
 
 # TODO: copy package.json and package-lock.json to leverage Docker cache
@@ -15,7 +15,7 @@ COPY ./frontend/ /frontend/
 RUN npm run build
 
 
-FROM ubuntu:20.04
+FROM debian:buster
 
 RUN apt-get update -y && apt-get install -y python3 python3-pip curl apt-utils
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install nginx
