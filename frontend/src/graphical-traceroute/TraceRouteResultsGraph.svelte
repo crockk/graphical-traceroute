@@ -12,14 +12,16 @@
 
   const svgConfig = {
     width: 1200,
-    aspectRatio: 9/16,
+    height: 675,
+    svgSizeBuffer: 500
     hInitDist: 50, // horizontalInitialDistance
     vInitDist: 50, // verticalInitialDistance
-    hNodeDist: 75, // horizontalNodeDistance
-    vNodeDist: 75, // verticalNodeDistance
-    nodeCircR: 10, // nodeCircleRadius
-    strokeWidth: 3, //strokeWidth
-    lineOffset: 3  // lineOffset
+    hNodeDist: 145, // horizontalNodeDistance
+    vNodeDist: 145, // verticalNodeDistance
+    nodeCircR: 35, // nodeCircleRadius
+    nodeCircStroke: 5, // nodeCircleRadius
+    strokeWidth: 5, //strokeWidth
+    lineOffset: 5,  // lineOffset
   }
 
   const colorOptions = [
@@ -322,6 +324,28 @@
     return moveToStr + " " + lineStr
   };
 
+  let svgWidth = svgConfig.width;
+  let svgHeight = svgConfig.height;
+
+  function checkSvgElementInBounds(pathInfo) {
+
+    let curElementXCoord = svgConfig.hInitDist + svgConfig.hNodeDist * pathInfo.endTtl;
+
+    if (curElementXCoord >= (svgWidth - svgConfig.hNodeDist)) {
+
+      svgWidth = svgConfig.hInitDist + svgConfig.svgSizeBuffer + svgConfig.hNodeDist * pathInfo.endTtl;
+
+    };
+
+    let curElementYCoord = svgConfig.hInitDist + svgConfig.hNodeDist * pathInfo.endYLevel;
+
+    if (curElementYCoord >= (svgHeight - svgConfig.hNodeDist)) {
+
+      svgHeight = svgConfig.vInitDist + svgConfig.svgSizeBuffer + svgConfig.vNodeDist * pathInfo.endYLevel;
+
+    };
+  };
+
 </script>
 
 {#if (! $tracerouteQueryResults)}
@@ -346,36 +370,44 @@
     </LayoutCell>
 
     <LayoutCell span="11">
-
       {#if parsedTraceroutes}
-      <svg width="{ svgConfig.width }" height="{ svgConfig.width * svgConfig.aspectRatio }">
+        <div class="divOverflow">
+          <svg width="{ svgWidth }" height="{ svgHeight }">
 
-        {#each parsedTraceroutes.pathList as pathInfo}
+            {#each parsedTraceroutes.pathList as pathInfo}
 
+              { checkSvgElementInBounds(pathInfo) }
 
-          <path fill="none" stroke="{ colorOptions[pathInfo.colorIndex] }" stroke-width="{ svgConfig.strokeWidth }"
-            d="
-              {pathInfoToSvgStr(pathInfo)}
-            "
-          />
+              <path fill="none" stroke="{ colorOptions[pathInfo.colorIndex] }" stroke-width="{ svgConfig.strokeWidth }"
+                d="
+                  {pathInfoToSvgStr(pathInfo)}
+                "
+              />
 
-        {/each}
-        {#each parsedTraceroutes.circleList as circleInfo}
+            {/each}
+            {#each parsedTraceroutes.circleList as circleInfo}
 
-          <circle
-            cx="{ svgConfig.hInitDist + svgConfig.hNodeDist * circleInfo.cx }"
-            cy="{ svgConfig.vInitDist + svgConfig.vNodeDist * circleInfo.cy }"
-            r="{ svgConfig.nodeCircR }"
-            stroke="green"
-            stroke-width="4"
-            fill="yellow"
-          />
-        {/each}
+              <circle
+                cx="{ svgConfig.hInitDist + svgConfig.hNodeDist * circleInfo.cx }"
+                cy="{ svgConfig.vInitDist + svgConfig.vNodeDist * circleInfo.cy }"
+                r="{ svgConfig.nodeCircR }"
+                stroke="green"
+                stroke-width="{ svgConfig.nodeCircStroke }"
+                fill="yellow"
+              />
+            {/each}
 
-      </svg>
+          </svg>
+        </div>
       {/if}
 
     </LayoutCell>
 
   </LayoutGrid>
 {/if}
+
+<style>
+  div.divOverflow {
+    overflow: scroll;
+  }
+</style>
