@@ -168,7 +168,7 @@ def generate_traceroutes(tracert_metric_range_data, num_tracert, start_time, end
     # it is 1:45am and this took me way longer than it should have but it is way faster now and i am no longer doing like 5 nested loops
     # you can use the mock tracert data above^ to test
     tracert_df_unique = tracert_df.drop_duplicates(subset=['path'], keep='first', ignore_index=False)
-    unique_indices = [float(i) for i in list(dict.fromkeys(tracert_df_unique.index.values.tolist()))]
+    unique_indices = sorted(list(set(tracert_df_unique.index)), reverse=True)
     for i in unique_indices:
         tracert = tracert_df.loc[i,['path', 'ttl']].values
         hops = []
