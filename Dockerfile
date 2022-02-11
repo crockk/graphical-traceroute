@@ -17,7 +17,7 @@ RUN npm run build
 
 FROM debian:bullseye
 
-RUN apt-get update -y && apt-get install -y python3 python3-pip curl apt-utils
+RUN apt-get update -y && apt-get install -y python3 python3-pip
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install nginx
 
 # Copy just the requirements.txt to leverage Docker cache
