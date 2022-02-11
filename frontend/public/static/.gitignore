@@ -1,0 +1,7 @@
+# .gitignore needed inorder to track empty directory to git.
+# Empty directory used for static files.
+
+# Ignore everything
+*
+#dont ignore this file
+!.gitignore
